@@ -16,6 +16,9 @@ pub fn triple_expense(nums: &[i64], target: i64) -> Option<i64> {
     for i in nums {
         let mut hash: HashMap<i64, i64> = HashMap::new();
         for j in nums {
+            // Technically, we could have just called the expense function,
+            // but this would result in allowing the duplicate value unless
+            // we modified that function to accept a value to exclude.
             if j == i {
                 continue;
             }
