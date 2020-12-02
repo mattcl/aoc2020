@@ -1,0 +1,9 @@
+#!/bin/sh
+if [ $# -eq 0 ]
+  then echo "Usage: ./run [day]\ne.g. ./run 001"
+  exit 1;
+fi
+
+example=$(find examples -type d -name "${1}*" -exec basename {} \;)
+
+cargo run --example=$example
