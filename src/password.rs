@@ -21,16 +21,13 @@ impl Policy {
             let range: Vec<&str> = parts[0].split("-").collect();
             if range.len() == 2 {
                 if let Some(letter) = parts[1].chars().collect::<Vec<char>>().first() {
-                    return Ok(
-                        Policy {
-                            min: range[0].parse()?,
-                            max: range[1].parse()?,
-                            letter: *letter
-                        }
-                    );
+                    return Ok(Policy {
+                        min: range[0].parse()?,
+                        max: range[1].parse()?,
+                        letter: *letter,
+                    });
                 }
             }
-
         }
 
         return Err(AocError::PolicyDefinitionError(def.to_string()));
@@ -59,7 +56,9 @@ impl Policy {
             .to_lowercase()
             .chars()
             .enumerate()
-            .filter(|(index, ch)| *ch == self.letter && (index + 1 == self.min || index + 1 == self.max))
+            .filter(|(index, ch)| {
+                *ch == self.letter && (index + 1 == self.min || index + 1 == self.max)
+            })
             .collect::<Vec<(usize, char)>>()
             .len();
 
@@ -89,7 +88,6 @@ pub fn count_valid_passwords(input: &Vec<String>, policy_type: &PolicyType) -> R
 
     Ok(count)
 }
-
 
 #[cfg(test)]
 mod tests {

@@ -33,7 +33,6 @@ pub fn triple_expense(nums: &[i64], target: i64) -> Option<i64> {
     None
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;

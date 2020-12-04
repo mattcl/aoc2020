@@ -25,5 +25,7 @@ pub fn load_input(day: &str) -> Result<Vec<String>> {
             }
         }
     }
-    Err(AocError::InputError(format!("Could not find or load input for {}", day).to_string()))
+    Err(AocError::InputError(
+        format!("Could not find or load input for {}", day).to_string(),
+    ))
 }

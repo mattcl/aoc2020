@@ -37,9 +37,7 @@ impl std::error::Error for AocError {
 impl std::fmt::Display for AocError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match *self {
-            AocError::InputError(ref def) => {
-                write!(f, "Could not load input: '{}'", def)
-            }
+            AocError::InputError(ref def) => write!(f, "Could not load input: '{}'", def),
             AocError::ForestDefinitionError(ref def) => {
                 write!(f, "Invalid Forest definition: '{}'", def)
             }
@@ -50,9 +48,7 @@ impl std::fmt::Display for AocError {
                 write!(f, "Invalid policy definition: '{}'", def)
             }
             AocError::IOError(ref err) => err.fmt(f),
-            AocError::OsStringErr(ref err) => {
-                write!(f, "OsString error: {:?}", err)
-            },
+            AocError::OsStringErr(ref err) => write!(f, "OsString error: {:?}", err),
             AocError::ParseIntError(ref err) => err.fmt(f),
         }
     }

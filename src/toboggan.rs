@@ -15,22 +15,24 @@ impl Forest {
         let width = spec[0].len();
 
         if width < 1 {
-            return Err(AocError::ForestDefinitionError("No columns in first row".to_string()));
+            return Err(AocError::ForestDefinitionError(
+                "No columns in first row".to_string(),
+            ));
         }
 
         for row in spec {
             if row.len() != width {
-                return Err(AocError::ForestDefinitionError("Not all columns are the same length".to_string()));
+                return Err(AocError::ForestDefinitionError(
+                    "Not all columns are the same length".to_string(),
+                ));
             }
             layout.push(row.chars().collect());
         }
 
-        Ok(
-            Forest {
-                layout: layout,
-                width: width
-            }
-        )
+        Ok(Forest {
+            layout: layout,
+            width: width,
+        })
     }
 
     pub fn traverse(&self, row: usize, col: usize) -> usize {
