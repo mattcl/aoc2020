@@ -29,3 +29,10 @@ pub fn load_input(day: &str) -> Result<Vec<String>> {
         format!("Could not find or load input for {}", day).to_string(),
     ))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // TODO: write tests - MCL - 2020-12-03
+}

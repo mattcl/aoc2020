@@ -7,6 +7,8 @@ pub type Result<T> = std::result::Result<T, AocError>;
 pub enum AocError {
     ForestDefinitionError(String),
     InputError(String),
+    PassportInfoError(String),
+    PassportInvalid(String),
     PasswordDefinitionError(String),
     PolicyDefinitionError(String),
 
@@ -25,6 +27,8 @@ impl std::error::Error for AocError {
         match *self {
             AocError::ForestDefinitionError(_) => None,
             AocError::InputError(_) => None,
+            AocError::PassportInfoError(_) => None,
+            AocError::PassportInvalid(_) => None,
             AocError::PasswordDefinitionError(_) => None,
             AocError::PolicyDefinitionError(_) => None,
             AocError::IOError(ref err) => Some(err),
@@ -40,6 +44,12 @@ impl std::fmt::Display for AocError {
             AocError::InputError(ref def) => write!(f, "Could not load input: '{}'", def),
             AocError::ForestDefinitionError(ref def) => {
                 write!(f, "Invalid Forest definition: '{}'", def)
+            }
+            AocError::PassportInfoError(ref def) => {
+                write!(f, "Cannot make passport from info: '{}'", def)
+            }
+            AocError::PassportInvalid(ref def) => {
+                write!(f, "Invalid passport. Missing or invalid field: '{}'", def)
             }
             AocError::PasswordDefinitionError(ref def) => {
                 write!(f, "Invalid password definition: '{}'", def)
