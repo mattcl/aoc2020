@@ -35,7 +35,7 @@ pub fn bench(c: &mut Criterion) {
                 .into_iter()
                 .map(|(row, col)| forest_example.traverse(row, col))
                 .fold(1, |acc, count| acc * count);
-            })
+        })
     });
     group.bench_function("part 2 actual", |b| {
         b.iter(|| {
@@ -43,7 +43,7 @@ pub fn bench(c: &mut Criterion) {
                 .into_iter()
                 .map(|(row, col)| forest_actual.traverse(row, col))
                 .fold(1, |acc, count| acc * count);
-            })
+        })
     });
     group.finish();
 }

@@ -1,6 +1,5 @@
-use std::collections::HashMap;
 use crate::error::{AocError, Result};
-
+use std::collections::HashMap;
 
 pub struct Passport {
     byr: String,
@@ -48,22 +47,40 @@ impl Passport {
             fields.insert(info[0], info[1].to_string());
         }
 
-
-        Ok(
-            Passport {
-                byr: fields.get("byr").ok_or(AocError::PassportInvalid("byr".to_string()))?.clone(),
-                iyr: fields.get("iyr").ok_or(AocError::PassportInvalid("iyr".to_string()))?.clone(),
-                eyr: fields.get("eyr").ok_or(AocError::PassportInvalid("eyr".to_string()))?.clone(),
-                hgt: fields.get("hgt").ok_or(AocError::PassportInvalid("hgt".to_string()))?.clone(),
-                hcl: fields.get("hcl").ok_or(AocError::PassportInvalid("hcl".to_string()))?.clone(),
-                ecl: fields.get("ecl").ok_or(AocError::PassportInvalid("ecl".to_string()))?.clone(),
-                pid: fields.get("pid").ok_or(AocError::PassportInvalid("pid".to_string()))?.clone(),
-                cid: match fields.get("cid") {
-                    Some(val) => Some(val.clone()),
-                    None => None,
-                },
-            }
-        )
+        Ok(Passport {
+            byr: fields
+                .get("byr")
+                .ok_or(AocError::PassportInvalid("byr".to_string()))?
+                .clone(),
+            iyr: fields
+                .get("iyr")
+                .ok_or(AocError::PassportInvalid("iyr".to_string()))?
+                .clone(),
+            eyr: fields
+                .get("eyr")
+                .ok_or(AocError::PassportInvalid("eyr".to_string()))?
+                .clone(),
+            hgt: fields
+                .get("hgt")
+                .ok_or(AocError::PassportInvalid("hgt".to_string()))?
+                .clone(),
+            hcl: fields
+                .get("hcl")
+                .ok_or(AocError::PassportInvalid("hcl".to_string()))?
+                .clone(),
+            ecl: fields
+                .get("ecl")
+                .ok_or(AocError::PassportInvalid("ecl".to_string()))?
+                .clone(),
+            pid: fields
+                .get("pid")
+                .ok_or(AocError::PassportInvalid("pid".to_string()))?
+                .clone(),
+            cid: match fields.get("cid") {
+                Some(val) => Some(val.clone()),
+                None => None,
+            },
+        })
     }
 
     fn validate_birth_year(&self) -> Result<()> {
@@ -123,13 +140,13 @@ impl Passport {
     fn validate_eye_color(&self) -> Result<()> {
         match self.ecl.as_str() {
             "amb" | "blu" | "brn" | "gry" | "grn" | "hzl" | "oth" => Ok(()),
-            _ => Err(AocError::PassportInvalid("ecl".to_string()))
+            _ => Err(AocError::PassportInvalid("ecl".to_string())),
         }
     }
 
     fn validate_pid(&self) -> Result<()> {
         if self.pid.len() != 9 || self.pid.chars().filter(|ch| ch.is_numeric()).count() != 9 {
-            return Err(AocError::PassportInvalid("pid".to_string()))
+            return Err(AocError::PassportInvalid("pid".to_string()));
         }
 
         Ok(())
@@ -148,7 +165,6 @@ impl Passport {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -165,7 +181,8 @@ mod tests {
     #[test]
     fn making_passports_from_input() {
         let input = vec![
-            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 cid:147 hgt:183cm".to_string(),
+            "ecl:gry pid:860033327 eyr:2020 hcl:#fffffd byr:1937 iyr:2017 cid:147 hgt:183cm"
+                .to_string(),
             "".to_string(),
             "iyr:2013 ecl:amb cid:350 eyr:2023 pid:028048884 hcl:#cfa07d byr:1929".to_string(),
             "".to_string(),
@@ -200,7 +217,10 @@ mod tests {
             "pid:3556412378 byr:2007".to_string(),
         ];
 
-        let res = Passport::from_input(&input).into_iter().collect::<Result<Vec<Passport>>>().expect("Could not construct passports");
+        let res = Passport::from_input(&input)
+            .into_iter()
+            .collect::<Result<Vec<Passport>>>()
+            .expect("Could not construct passports");
 
         assert_eq!(res.len(), 4);
 
@@ -226,7 +246,10 @@ mod tests {
             "iyr:2010 hgt:158cm hcl:#b6652a ecl:blu byr:1944 eyr:2021 pid:093154719".to_string(),
         ];
 
-        let res = Passport::from_input(&input).into_iter().collect::<Result<Vec<Passport>>>().expect("Could not construct passports");
+        let res = Passport::from_input(&input)
+            .into_iter()
+            .collect::<Result<Vec<Passport>>>()
+            .expect("Could not construct passports");
 
         assert_eq!(res.len(), 4);
 

@@ -2,12 +2,12 @@ use aoc::expense::{expense_report, triple_expense};
 use aoc::util::load_input;
 
 fn main() {
-    let vals: Vec<i64> = load_input("001")
+    let vals: Vec<i32> = load_input("001")
         .expect("Could not load input")
         .into_iter()
         .map(|v| v.parse())
-        .collect::<Result<Vec<i64>, _>>()
-        .expect("Could not convert all input to i64");
+        .collect::<Result<Vec<i32>, _>>()
+        .expect("Could not convert all input to i32");
 
     println!(
         "part 1: {}",
