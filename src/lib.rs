@@ -1,3 +1,4 @@
+pub mod boarding;
 pub mod error;
 pub mod expense;
 pub mod passport;
