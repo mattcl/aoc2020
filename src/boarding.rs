@@ -1,4 +1,5 @@
 use crate::error::{AocError, Result};
+use rayon::prelude::*;
 
 #[derive(Eq, PartialEq, Debug, Clone)]
 pub struct Seat {
@@ -20,6 +21,7 @@ impl Seat {
     }
 }
 
+#[derive(Eq, PartialEq, Debug, Clone)]
 pub struct Pass {
     locator: String,
     row_locator: String,
@@ -79,9 +81,72 @@ impl Pass {
     }
 }
 
+
+// the following four functions are just playing around with performance of
+// result handling and whatnot
+pub fn find_highest_id(locators: &[String]) -> Result<usize> {
+    locators
+        .into_iter()
+        .map(|line| Pass::new(&line))
+        .map(|pass| pass.map_or_else(|e| Err(e), |p| p.seat()))
+        .map(|seat| seat.map_or_else(|e| Err(e), |s| Ok(s.id())))
+        .collect::<Result<Vec<usize>>>()?
+        .into_iter()
+        .max()
+        .ok_or(AocError::InvalidLocator("No locators".to_string()))
+}
+
+pub fn find_highest_id_bad_errors(locators: &[String]) -> Result<usize> {
+    locators
+        .into_iter()
+        .map(|line| Pass::new(&line).unwrap())
+        .map(|pass| pass.seat().unwrap())
+        .map(|seat| seat.id())
+        .max()
+        .ok_or(AocError::InvalidLocator("No locators".to_string()))
+}
+
+
+pub fn find_highest_id_par_bad_errors(locators: &[String]) -> Result<usize> {
+    locators
+        .into_par_iter()
+        .map(|line| Pass::new(&line).unwrap())
+        .map(|pass| pass.seat().unwrap())
+        .map(|seat| seat.id())
+        .max()
+        .ok_or(AocError::InvalidLocator("No locators".to_string()))
+}
+
+pub fn find_highest_id_par(locators: &[String]) -> Result<usize> {
+    locators
+        .into_par_iter()
+        .map(|line| Pass::new(&line))
+        .map(|pass| pass.map_or_else(|e| Err(e), |p| p.seat()))
+        .map(|seat| seat.map_or_else(|e| Err(e), |s| Ok(s.id())))
+        .collect::<Result<Vec<usize>>>()?
+        .into_par_iter()
+        .max()
+        .ok_or(AocError::InvalidLocator("No locators".to_string()))
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn findind_highest_id() {
+        let locators = vec![
+            "BFFFBBFRRR".to_string(),
+            "FFFBBBFRRR".to_string(),
+            "BBFFBBFRLL".to_string(),
+        ];
+
+        assert_eq!(find_highest_id(&locators).expect("input error"), 820);
+        assert_eq!(find_highest_id_bad_errors(&locators).expect("input error"), 820);
+        assert_eq!(find_highest_id_par_bad_errors(&locators).expect("input error"), 820);
+        assert_eq!(find_highest_id_par(&locators).expect("input error"), 820);
+    }
 
     mod seat {
         use super::super::*;
