@@ -1,5 +1,4 @@
 use aoc::customs::Group;
-use aoc::error::Result;
 use aoc::util::load_input;
 
 fn main() {
