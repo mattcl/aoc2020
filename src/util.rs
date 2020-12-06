@@ -14,7 +14,9 @@ pub fn load_lines(file: &str) -> Result<Vec<String>> {
 }
 
 pub fn load_input(day: &str) -> Result<Vec<String>> {
+    //
     // examples/003_toboggan-trajectory/input
+    //
     let examples_dir = Path::new("examples");
     for entry in fs::read_dir(examples_dir)? {
         let entry = entry?;
@@ -25,9 +27,10 @@ pub fn load_input(day: &str) -> Result<Vec<String>> {
             }
         }
     }
-    Err(AocError::InputError(
-        format!("Could not find or load input for {}", day).to_string(),
-    ))
+    Err(AocError::InputError(format!(
+        "Could not find or load input for {}",
+        day
+    )))
 }
 
 #[cfg(test)]

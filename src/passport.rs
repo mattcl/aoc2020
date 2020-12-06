@@ -9,15 +9,16 @@ pub struct Passport {
     hcl: String,
     ecl: String,
     pid: String,
-    cid: Option<String>,
+    // just make this public so the compiler shuts up about the dead code
+    pub cid: Option<String>,
 }
 
 impl Passport {
-    pub fn from_input(input: &Vec<String>) -> Vec<Result<Self>> {
+    pub fn from_input(input: &[String]) -> Vec<Result<Self>> {
         let mut passports = Vec::new();
         let mut acc = Vec::new();
         for line in input {
-            if line.len() == 0 {
+            if line.is_empty() {
                 let data: String = acc.join(" ");
                 passports.push(Passport::new(&data));
                 acc = Vec::new();
@@ -26,7 +27,7 @@ impl Passport {
             }
         }
 
-        if acc.len() > 0 {
+        if !acc.is_empty() {
             let data: String = acc.join(" ");
             passports.push(Passport::new(&data));
         }
@@ -37,7 +38,7 @@ impl Passport {
     pub fn new(data: &str) -> Result<Self> {
         let mut fields: HashMap<&str, String> = HashMap::new();
 
-        for info in data.split(" ").map(|field| field.split(":")) {
+        for info in data.split(' ').map(|field| field.split(':')) {
             let info: Vec<&str> = info.collect();
 
             if info.len() != 2 {
@@ -50,31 +51,31 @@ impl Passport {
         Ok(Passport {
             byr: fields
                 .get("byr")
-                .ok_or(AocError::PassportInvalid("byr".to_string()))?
+                .ok_or_else(|| AocError::PassportInvalid("byr".to_string()))?
                 .clone(),
             iyr: fields
                 .get("iyr")
-                .ok_or(AocError::PassportInvalid("iyr".to_string()))?
+                .ok_or_else(|| AocError::PassportInvalid("iyr".to_string()))?
                 .clone(),
             eyr: fields
                 .get("eyr")
-                .ok_or(AocError::PassportInvalid("eyr".to_string()))?
+                .ok_or_else(|| AocError::PassportInvalid("eyr".to_string()))?
                 .clone(),
             hgt: fields
                 .get("hgt")
-                .ok_or(AocError::PassportInvalid("hgt".to_string()))?
+                .ok_or_else(|| AocError::PassportInvalid("hgt".to_string()))?
                 .clone(),
             hcl: fields
                 .get("hcl")
-                .ok_or(AocError::PassportInvalid("hcl".to_string()))?
+                .ok_or_else(|| AocError::PassportInvalid("hcl".to_string()))?
                 .clone(),
             ecl: fields
                 .get("ecl")
-                .ok_or(AocError::PassportInvalid("ecl".to_string()))?
+                .ok_or_else(|| AocError::PassportInvalid("ecl".to_string()))?
                 .clone(),
             pid: fields
                 .get("pid")
-                .ok_or(AocError::PassportInvalid("pid".to_string()))?
+                .ok_or_else(|| AocError::PassportInvalid("pid".to_string()))?
                 .clone(),
             cid: match fields.get("cid") {
                 Some(val) => Some(val.clone()),
@@ -126,7 +127,7 @@ impl Passport {
     }
 
     fn validate_hair_color(&self) -> Result<()> {
-        if !self.hcl.starts_with("#") || self.hcl.len() != 7 {
+        if !self.hcl.starts_with('#') || self.hcl.len() != 7 {
             return Err(AocError::PassportInvalid("hcl".to_string()));
         }
 

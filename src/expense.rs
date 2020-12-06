@@ -3,10 +3,8 @@ use std::collections::HashMap;
 pub fn expense_report_slow(nums: &[i32], target: i32) -> Option<i32> {
     for i in nums {
         for j in nums {
-            if i != j {
-                if i + j == target {
-                    return Some(i * j);
-                }
+            if i != j && i + j == target {
+                return Some(i * j);
             }
         }
     }

@@ -9,7 +9,7 @@ pub struct Seat {
 
 impl Seat {
     pub fn new(row: usize, col: usize) -> Self {
-        Seat { row: row, col: col }
+        Seat { row, col }
     }
 
     pub fn from_id(id: usize) -> Self {
@@ -65,11 +65,7 @@ impl Pass {
             match ch {
                 'F' => end = mid - 1,
                 'B' => start = mid,
-                _ => {
-                    return Err(AocError::SeatNotFound(
-                        format!("invalid character {}", ch).to_string(),
-                    ))
-                }
+                _ => return Err(AocError::SeatNotFound(format!("invalid character {}", ch))),
             }
 
             if start == end {
@@ -81,54 +77,51 @@ impl Pass {
     }
 }
 
-
 // the following four functions are just playing around with performance of
 // result handling and whatnot
 pub fn find_highest_id(locators: &[String]) -> Result<usize> {
     locators
-        .into_iter()
+        .iter()
         .map(|line| Pass::new(&line))
-        .map(|pass| pass.map_or_else(|e| Err(e), |p| p.seat()))
-        .map(|seat| seat.map_or_else(|e| Err(e), |s| Ok(s.id())))
+        .map(|pass| pass.map_or_else(Err, |p| p.seat()))
+        .map(|seat| seat.map_or_else(Err, |s| Ok(s.id())))
         .collect::<Result<Vec<usize>>>()?
         .into_iter()
         .max()
-        .ok_or(AocError::InvalidLocator("No locators".to_string()))
+        .ok_or_else(|| AocError::InvalidLocator("No locators".to_string()))
 }
 
 pub fn find_highest_id_bad_errors(locators: &[String]) -> Result<usize> {
     locators
-        .into_iter()
+        .iter()
         .map(|line| Pass::new(&line).unwrap())
         .map(|pass| pass.seat().unwrap())
         .map(|seat| seat.id())
         .max()
-        .ok_or(AocError::InvalidLocator("No locators".to_string()))
+        .ok_or_else(|| AocError::InvalidLocator("No locators".to_string()))
 }
-
 
 pub fn find_highest_id_par_bad_errors(locators: &[String]) -> Result<usize> {
     locators
-        .into_par_iter()
+        .par_iter()
         .map(|line| Pass::new(&line).unwrap())
         .map(|pass| pass.seat().unwrap())
         .map(|seat| seat.id())
         .max()
-        .ok_or(AocError::InvalidLocator("No locators".to_string()))
+        .ok_or_else(|| AocError::InvalidLocator("No locators".to_string()))
 }
 
 pub fn find_highest_id_par(locators: &[String]) -> Result<usize> {
     locators
-        .into_par_iter()
+        .par_iter()
         .map(|line| Pass::new(&line))
-        .map(|pass| pass.map_or_else(|e| Err(e), |p| p.seat()))
-        .map(|seat| seat.map_or_else(|e| Err(e), |s| Ok(s.id())))
+        .map(|pass| pass.map_or_else(Err, |p| p.seat()))
+        .map(|seat| seat.map_or_else(Err, |s| Ok(s.id())))
         .collect::<Result<Vec<usize>>>()?
         .into_par_iter()
         .max()
-        .ok_or(AocError::InvalidLocator("No locators".to_string()))
+        .ok_or_else(|| AocError::InvalidLocator("No locators".to_string()))
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -143,8 +136,14 @@ mod tests {
         ];
 
         assert_eq!(find_highest_id(&locators).expect("input error"), 820);
-        assert_eq!(find_highest_id_bad_errors(&locators).expect("input error"), 820);
-        assert_eq!(find_highest_id_par_bad_errors(&locators).expect("input error"), 820);
+        assert_eq!(
+            find_highest_id_bad_errors(&locators).expect("input error"),
+            820
+        );
+        assert_eq!(
+            find_highest_id_par_bad_errors(&locators).expect("input error"),
+            820
+        );
         assert_eq!(find_highest_id_par(&locators).expect("input error"), 820);
     }
 

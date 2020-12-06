@@ -6,8 +6,8 @@ pub struct Forest {
 }
 
 impl Forest {
-    pub fn new(spec: &Vec<String>) -> Result<Self> {
-        if spec.len() < 1 {
+    pub fn new(spec: &[String]) -> Result<Self> {
+        if spec.is_empty() {
             return Err(AocError::ForestDefinitionError("No rows".to_string()));
         }
 
@@ -29,10 +29,7 @@ impl Forest {
             layout.push(row.chars().collect());
         }
 
-        Ok(Forest {
-            layout: layout,
-            width: width,
-        })
+        Ok(Forest { layout, width })
     }
 
     pub fn traverse(&self, row: usize, col: usize) -> usize {

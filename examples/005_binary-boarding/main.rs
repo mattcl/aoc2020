@@ -1,4 +1,4 @@
-use aoc::boarding::{Pass, Seat, find_highest_id};
+use aoc::boarding::{find_highest_id, Pass, Seat};
 use aoc::error::Result;
 use aoc::util::load_input;
 
@@ -20,7 +20,10 @@ fn main() {
     println!("part 1: {}", res.iter().max().expect("Could not find max"));
 
     let lines = load_input("005").expect("could not load input");
-    println!("part 1: {}", find_highest_id(&lines).expect("Could not find max"));
+    println!(
+        "part 1: {}",
+        find_highest_id(&lines).expect("Could not find max")
+    );
 
     res.sort();
     let seats = res.split_off(1);

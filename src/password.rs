@@ -15,10 +15,10 @@ pub struct Policy {
 
 impl Policy {
     fn new(def: &str) -> Result<Self> {
-        let parts: Vec<&str> = def.split(" ").collect();
+        let parts: Vec<&str> = def.split(' ').collect();
 
         if parts.len() == 2 {
-            let range: Vec<&str> = parts[0].split("-").collect();
+            let range: Vec<&str> = parts[0].split('-').collect();
             if range.len() == 2 {
                 if let Some(letter) = parts[1].chars().collect::<Vec<char>>().first() {
                     return Ok(Policy {
@@ -30,7 +30,7 @@ impl Policy {
             }
         }
 
-        return Err(AocError::PolicyDefinitionError(def.to_string()));
+        Err(AocError::PolicyDefinitionError(def.to_string()))
     }
 
     fn allowed(&self, password: &str, policy_type: &PolicyType) -> bool {
@@ -45,8 +45,7 @@ impl Policy {
             .to_lowercase()
             .chars()
             .filter(|ch| *ch == self.letter)
-            .collect::<Vec<char>>()
-            .len();
+            .count();
 
         count >= self.min && count <= self.max
     }
@@ -59,14 +58,13 @@ impl Policy {
             .filter(|(index, ch)| {
                 *ch == self.letter && (index + 1 == self.min || index + 1 == self.max)
             })
-            .collect::<Vec<(usize, char)>>()
-            .len();
+            .count();
 
         count == 1
     }
 }
 
-pub fn count_valid_passwords(input: &Vec<String>, policy_type: &PolicyType) -> Result<usize> {
+pub fn count_valid_passwords(input: &[String], policy_type: &PolicyType) -> Result<usize> {
     let mut policies: HashMap<&str, Policy> = HashMap::new();
     let mut count = 0;
     for candidate in input {
