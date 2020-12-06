@@ -15,24 +15,10 @@ pub struct Passport {
 
 impl Passport {
     pub fn from_input(input: &[String]) -> Vec<Result<Self>> {
-        let mut passports = Vec::new();
-        let mut acc = Vec::new();
-        for line in input {
-            if line.is_empty() {
-                let data: String = acc.join(" ");
-                passports.push(Passport::new(&data));
-                acc = Vec::new();
-            } else {
-                acc.push(line.clone());
-            }
-        }
-
-        if !acc.is_empty() {
-            let data: String = acc.join(" ");
-            passports.push(Passport::new(&data));
-        }
-
-        passports
+        input
+            .split(|line| line.is_empty())
+            .map(|group| Self::new(&group.join(" ")))
+            .collect::<Vec<Result<Self>>>()
     }
 
     pub fn new(data: &str) -> Result<Self> {
