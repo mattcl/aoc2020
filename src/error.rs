@@ -9,11 +9,14 @@ pub enum AocError {
     InputError(String),
     InvalidAnswers(String),
     InvalidLocator(String),
+    InvalidRule(String),
     SeatNotFound(String),
     PassportInfoError(String),
     PassportInvalid(String),
     PasswordDefinitionError(String),
     PolicyDefinitionError(String),
+
+    UnknownBag(String),
 
     /// Represents all other cases of
     IOError(std::io::Error),
@@ -32,11 +35,13 @@ impl std::error::Error for AocError {
             AocError::InputError(_) => None,
             AocError::InvalidAnswers(_) => None,
             AocError::InvalidLocator(_) => None,
+            AocError::InvalidRule(_) => None,
             AocError::SeatNotFound(_) => None,
             AocError::PassportInfoError(_) => None,
             AocError::PassportInvalid(_) => None,
             AocError::PasswordDefinitionError(_) => None,
             AocError::PolicyDefinitionError(_) => None,
+            AocError::UnknownBag(_) => None,
             AocError::IOError(ref err) => Some(err),
             AocError::OsStringErr(_) => None,
             AocError::ParseIntError(ref err) => Some(err),
@@ -50,6 +55,7 @@ impl std::fmt::Display for AocError {
             AocError::InputError(ref def) => write!(f, "Could not load input: '{}'", def),
             AocError::InvalidAnswers(ref def) => write!(f, "Customs answers invalid: '{}'", def),
             AocError::InvalidLocator(ref def) => write!(f, "Invalid locator: '{}'", def),
+            AocError::InvalidRule(ref def) => write!(f, "Invalid rule: '{}'", def),
             AocError::SeatNotFound(ref def) => write!(f, "Seat not found: '{}'", def),
             AocError::ForestDefinitionError(ref def) => {
                 write!(f, "Invalid Forest definition: '{}'", def)
@@ -66,6 +72,7 @@ impl std::fmt::Display for AocError {
             AocError::PolicyDefinitionError(ref def) => {
                 write!(f, "Invalid policy definition: '{}'", def)
             }
+            AocError::UnknownBag(ref def) => write!(f, "Unknown bag: '{}'", def),
             AocError::IOError(ref err) => err.fmt(f),
             AocError::OsStringErr(ref err) => write!(f, "OsString error: {:?}", err),
             AocError::ParseIntError(ref err) => err.fmt(f),
