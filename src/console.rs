@@ -3,17 +3,17 @@ use std::collections::HashSet;
 
 #[derive(Eq, PartialEq, Debug)]
 pub enum Op {
-    acc,
-    jmp,
-    nop,
+    Acc,
+    Jmp,
+    Nop,
 }
 
 impl Op {
     pub fn from_str(input: &str) -> Result<Op> {
         match input {
-            "acc" => Ok(Op::acc),
-            "jmp" => Ok(Op::jmp),
-            "nop" => Ok(Op::nop),
+            "acc" => Ok(Op::Acc),
+            "jmp" => Ok(Op::Jmp),
+            "nop" => Ok(Op::Nop),
             _ => Err(AocError::UnknownOperation(input.to_string())),
         }
     }
@@ -64,12 +64,12 @@ impl Program {
         if let Some(cur) = self.instructions.get(ptr as usize) {
             let mut new_acc = accumulator;
             let new_ptr = match cur.op {
-                Op::acc => {
+                Op::Acc => {
                     new_acc += cur.val;
                     ptr + 1
                 }
-                Op::jmp => ptr + cur.val,
-                Op::nop => ptr + 1,
+                Op::Jmp => ptr + cur.val,
+                Op::Nop => ptr + 1,
             };
             Ok((new_ptr, new_acc))
         } else {
@@ -120,8 +120,8 @@ impl Program {
         for i in 0..self.instructions.len() {
             if let Some(ins) = self.instructions.get_mut(i) {
                 match ins.op {
-                    Op::jmp => ins.op = Op::nop,
-                    Op::nop => ins.op = Op::jmp,
+                    Op::Jmp => ins.op = Op::Nop,
+                    Op::Nop => ins.op = Op::Jmp,
                     _ => {}
                 }
             }
@@ -130,8 +130,8 @@ impl Program {
 
             if let Some(ins) = self.instructions.get_mut(i) {
                 match ins.op {
-                    Op::jmp => ins.op = Op::nop,
-                    Op::nop => ins.op = Op::jmp,
+                    Op::Jmp => ins.op = Op::Nop,
+                    Op::Nop => ins.op = Op::Jmp,
                     _ => {}
                 }
             }
@@ -192,8 +192,8 @@ impl Program {
             let mut did_swap = true;
             if let Some(ins) = self.instructions.get_mut(ptr as usize) {
                 match ins.op {
-                    Op::jmp => ins.op = Op::nop,
-                    Op::nop => ins.op = Op::jmp,
+                    Op::Jmp => ins.op = Op::Nop,
+                    Op::Nop => ins.op = Op::Jmp,
                     _ => did_swap = false,
                 }
             }
@@ -204,8 +204,8 @@ impl Program {
 
                 if let Some(ins) = self.instructions.get_mut(ptr as usize) {
                     match ins.op {
-                        Op::jmp => ins.op = Op::nop,
-                        Op::nop => ins.op = Op::jmp,
+                        Op::Jmp => ins.op = Op::Nop,
+                        Op::Nop => ins.op = Op::Jmp,
                         _ => {}
                     }
                 }
@@ -233,9 +233,9 @@ mod tests {
 
         #[test]
         fn from_str() {
-            assert_eq!(Op::from_str("acc").unwrap(), Op::acc);
-            assert_eq!(Op::from_str("jmp").unwrap(), Op::jmp);
-            assert_eq!(Op::from_str("nop").unwrap(), Op::nop);
+            assert_eq!(Op::from_str("acc").unwrap(), Op::Acc);
+            assert_eq!(Op::from_str("jmp").unwrap(), Op::Jmp);
+            assert_eq!(Op::from_str("nop").unwrap(), Op::Nop);
             assert!(Op::from_str("foo").is_err());
             assert!(Op::from_str("bar").is_err());
         }
@@ -253,11 +253,11 @@ mod tests {
             assert!(Instruction::new("bar +1").is_err());
 
             let i = Instruction::new("acc +1").unwrap();
-            assert_eq!(i.op, Op::acc);
+            assert_eq!(i.op, Op::Acc);
             assert_eq!(i.val, 1);
 
             let i = Instruction::new("nop -1333").unwrap();
-            assert_eq!(i.op, Op::nop);
+            assert_eq!(i.op, Op::Nop);
             assert_eq!(i.val, -1333);
         }
     }

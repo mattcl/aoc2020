@@ -16,3 +16,11 @@ proptest = "0.10.1"
 [[bench]]
 name = "bench_main"
 harness = false
+
+[[example]]
+name = "008_mem_part2_iter"
+path = "examples/008_handheld-halting/mem/iterative.rs"
+
+[[example]]
+name = "008_mem_part2_recur"
+path = "examples/008_handheld-halting/mem/recursive.rs"

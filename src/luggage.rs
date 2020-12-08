@@ -277,7 +277,6 @@ mod tests {
     }
 
     mod rule {
-        use super::super::*;
         use super::*;
 
         fn obj() -> Rule {
@@ -352,7 +351,6 @@ mod tests {
     }
 
     mod ruleset {
-        use super::super::*;
         use super::*;
 
         #[test]

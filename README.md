@@ -6,8 +6,9 @@ solution execution is managed by examples, with the following directory
 structure:
 ```
 examples/
-   001_<name>_/ # -> day 1
-   002_<name>_/ # -> day 2
+   001_<name>_/        # -> day 1
+   002_<name>_/        # -> day 2
+   002_<name>_/mem/... # -> day 2 memory examples (running these easily is WIP)
    ...
 ```
 
