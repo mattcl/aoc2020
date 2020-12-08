@@ -1,7 +1,8 @@
+use rayon::prelude::*;
 use crate::error::{AocError, Result};
 use std::collections::HashSet;
 
-#[derive(Eq, PartialEq, Debug)]
+#[derive(Eq, PartialEq, Clone, Debug)]
 pub enum Op {
     Acc,
     Jmp,
@@ -19,7 +20,7 @@ impl Op {
     }
 }
 
-#[derive(Eq, PartialEq, Debug)]
+#[derive(Eq, PartialEq, Clone, Debug)]
 pub struct Instruction {
     op: Op,
     val: i64,
@@ -46,6 +47,7 @@ impl Instruction {
     }
 }
 
+#[derive(PartialEq, Clone, Debug)]
 pub struct Program {
     instructions: Vec<Instruction>,
 }
@@ -146,6 +148,45 @@ impl Program {
         }
 
         Err(AocError::InvalidProgram("Could not be fixed".to_string()))
+    }
+
+    pub fn correct_parallel(&self) -> Result<i64> {
+        let res = (0..self.instructions.len())
+            .collect::<Vec<usize>>()
+            .par_iter()
+            .filter(|i| {
+                match self.instructions.get(**i) {
+                    Some(ins) => ins.op != Op::Nop,
+                    None => false
+                }
+            })
+            .map(|i| {
+                let mut copy = self.clone();
+                if let Some(ins) = copy.instructions.get_mut(*i) {
+                    match ins.op {
+                        Op::Jmp => ins.op = Op::Nop,
+                        Op::Nop => ins.op = Op::Jmp,
+                        _ => {}
+                    }
+                    if let Ok((val, normal)) = copy.execute() {
+                        if normal {
+                            return Some(val);
+                        }
+                    }
+                    return None;
+                } else {
+                    unreachable!("we know this isn't possible")
+                }
+            })
+            .filter(|v| v.is_some())
+            .map(|v| v.unwrap())
+            .collect::<Vec<i64>>();
+
+        if let Some(v) = res.first() {
+            return Ok(*v);
+        }
+
+        Err(AocError::InvalidProgram("Could not fix program".to_string()))
     }
 
     pub fn correct_recursive(&mut self) -> Result<i64> {
@@ -312,6 +353,9 @@ mod tests {
         fn correct() {
             let mut p = Program::new(&input()).unwrap();
             assert_eq!(p.correct().unwrap(), 8);
+
+            let p = Program::new(&input()).unwrap();
+            assert_eq!(p.correct_parallel().unwrap(), 8);
 
             let mut p = Program::new(&input()).unwrap();
             assert_eq!(p.correct_recursive().unwrap(), 8);

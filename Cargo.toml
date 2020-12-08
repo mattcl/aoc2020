@@ -22,5 +22,9 @@ name = "008_mem_part2_iter"
 path = "examples/008_handheld-halting/mem/iterative.rs"
 
 [[example]]
+name = "008_mem_part2_par"
+path = "examples/008_handheld-halting/mem/parallel.rs"
+
+[[example]]
 name = "008_mem_part2_recur"
 path = "examples/008_handheld-halting/mem/recursive.rs"

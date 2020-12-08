@@ -11,6 +11,10 @@ pub fn bench(c: &mut Criterion) {
         b.iter(|| program.correct())
     });
 
+    group.bench_function(BenchmarkId::new("correct", "parallel"), |b| {
+        b.iter(|| program.correct_parallel())
+    });
+
     group.bench_function(BenchmarkId::new("correct", "recursive"), |b| {
         b.iter(|| program.correct_recursive())
     });

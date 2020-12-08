@@ -15,6 +15,10 @@ fn main() {
     );
     println!(
         "part 2: {}",
+        program.correct_parallel().expect("could not correct program")
+    );
+    println!(
+        "part 2: {}",
         program
             .correct_recursive()
             .expect("could not correct program")
