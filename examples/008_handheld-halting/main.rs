@@ -13,4 +13,10 @@ fn main() {
         "part 2: {}",
         program.correct().expect("could not correct program")
     );
+    println!(
+        "part 2: {}",
+        program
+            .correct_recursive()
+            .expect("could not correct program")
+    );
 }

@@ -6,6 +6,7 @@ mod day_003;
 mod day_004;
 mod day_005;
 mod day_007;
+mod day_008;
 
 criterion_main! {
     day_001::benches,
@@ -14,4 +15,5 @@ criterion_main! {
     day_004::benches,
     day_005::benches,
     day_007::benches,
+    day_008::benches,
 }

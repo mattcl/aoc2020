@@ -60,6 +60,26 @@ impl Program {
         })
     }
 
+    pub fn step(&self, ptr: i64, accumulator: i64) -> Result<(i64, i64)> {
+        if let Some(cur) = self.instructions.get(ptr as usize) {
+            let mut new_acc = accumulator;
+            let new_ptr = match cur.op {
+                Op::acc => {
+                    new_acc += cur.val;
+                    ptr + 1
+                }
+                Op::jmp => ptr + cur.val,
+                Op::nop => ptr + 1,
+            };
+            Ok((new_ptr, new_acc))
+        } else {
+            Err(AocError::InvalidProgram(format!(
+                "Could not find instruction at {}",
+                ptr
+            )))
+        }
+    }
+
     pub fn execute(&self) -> Result<(i64, bool)> {
         let mut seen: HashSet<i64> = HashSet::new();
 
@@ -71,34 +91,25 @@ impl Program {
         let mut accumulator = 0;
         let eof = self.instructions.len() as i64;
         loop {
-            if let Some(cur) = self.instructions.get(ptr as usize) {
-                seen.insert(ptr);
-                ptr = match cur.op {
-                    Op::acc => {
-                        accumulator += cur.val;
-                        ptr + 1
-                    }
-                    Op::jmp => ptr + cur.val,
-                    Op::nop => ptr + 1,
-                };
+            seen.insert(ptr);
 
-                if ptr == eof {
-                    break;
-                }
+            let res = self.step(ptr, accumulator)?;
+            ptr = res.0;
+            accumulator = res.1;
 
-                if ptr < 0 || ptr > eof {
-                    return Err(AocError::InvalidProgram(format!(
-                        "Attempted to access instruction location out of bounds {} of {}",
-                        ptr,
-                        self.instructions.len()
-                    )));
-                }
+            if ptr == eof {
+                break;
+            }
 
-                if seen.contains(&ptr) {
-                    return Ok((accumulator, false));
-                }
-            } else {
-                unreachable!("Should not be possible");
+            if ptr < 0 || ptr > eof {
+                return Err(AocError::InvalidProgram(format!(
+                    "Attempted to access instruction location out of bounds {} of {}",
+                    ptr, eof
+                )));
+            }
+
+            if seen.contains(&ptr) {
+                return Ok((accumulator, false));
             }
         }
 
@@ -115,11 +126,7 @@ impl Program {
                 }
             }
 
-            if let Ok((val, normal)) = self.execute() {
-                if normal {
-                    return Ok(val);
-                }
-            }
+            let res = self.execute();
 
             if let Some(ins) = self.instructions.get_mut(i) {
                 match ins.op {
@@ -128,9 +135,94 @@ impl Program {
                     _ => {}
                 }
             }
+
+            // we could have done this before we put it back, but making
+            // benchmarks more possible
+            if let Ok((val, normal)) = res {
+                if normal {
+                    return Ok(val);
+                }
+            }
         }
 
         Err(AocError::InvalidProgram("Could not be fixed".to_string()))
+    }
+
+    pub fn correct_recursive(&mut self) -> Result<i64> {
+        let mut seen = HashSet::new();
+        let mut final_accumulator = 0;
+        if self.execute_r(0, 0, false, &mut seen, &mut final_accumulator)? {
+            return Ok(final_accumulator);
+        }
+
+        Err(AocError::InvalidProgram(
+            "Could not fix program".to_string(),
+        ))
+    }
+
+    pub fn execute_r(
+        &mut self,
+        ptr: i64,
+        accumulator: i64,
+        changed: bool,
+        seen: &mut HashSet<i64>,
+        final_accumulator: &mut i64,
+    ) -> Result<bool> {
+        let eof = self.instructions.len() as i64;
+
+        if ptr < 0 || ptr > eof {
+            return Err(AocError::InvalidProgram(format!(
+                "Attempted to access instruction location out of bounds {} of {}",
+                ptr, eof,
+            )));
+        }
+
+        if ptr == eof {
+            *final_accumulator = accumulator;
+            return Ok(true);
+        }
+
+        if seen.contains(&ptr) {
+            return Ok(false);
+        }
+
+        seen.insert(ptr);
+
+        if !changed {
+            let mut did_swap = true;
+            if let Some(ins) = self.instructions.get_mut(ptr as usize) {
+                match ins.op {
+                    Op::jmp => ins.op = Op::nop,
+                    Op::nop => ins.op = Op::jmp,
+                    _ => did_swap = false,
+                }
+            }
+
+            if did_swap {
+                let res = self.step(ptr, accumulator)?;
+                let execution_res = self.execute_r(res.0, res.1, true, seen, final_accumulator)?;
+
+                if let Some(ins) = self.instructions.get_mut(ptr as usize) {
+                    match ins.op {
+                        Op::jmp => ins.op = Op::nop,
+                        Op::nop => ins.op = Op::jmp,
+                        _ => {}
+                    }
+                }
+
+                if execution_res {
+                    return Ok(true);
+                }
+            }
+        }
+
+        let res = self.step(ptr, accumulator)?;
+        if self.execute_r(res.0, res.1, changed, seen, final_accumulator)? {
+            return Ok(true);
+        }
+
+        seen.remove(&ptr);
+        return Ok(false);
     }
 }
 
@@ -220,6 +312,9 @@ mod tests {
         fn correct() {
             let mut p = Program::new(&input()).unwrap();
             assert_eq!(p.correct().unwrap(), 8);
+
+            let mut p = Program::new(&input()).unwrap();
+            assert_eq!(p.correct_recursive().unwrap(), 8);
         }
     }
 }
