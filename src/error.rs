@@ -18,6 +18,11 @@ pub enum AocError {
 
     UnknownBag(String),
 
+    /// console
+    InvalidInstruction(String),
+    InvalidProgram(String),
+    UnknownOperation(String),
+
     /// Represents all other cases of
     IOError(std::io::Error),
 
@@ -45,6 +50,9 @@ impl std::error::Error for AocError {
             AocError::IOError(ref err) => Some(err),
             AocError::OsStringErr(_) => None,
             AocError::ParseIntError(ref err) => Some(err),
+            AocError::InvalidInstruction(_) => None,
+            AocError::InvalidProgram(_) => None,
+            AocError::UnknownOperation(_) => None,
         }
     }
 }
@@ -73,6 +81,9 @@ impl std::fmt::Display for AocError {
                 write!(f, "Invalid policy definition: '{}'", def)
             }
             AocError::UnknownBag(ref def) => write!(f, "Unknown bag: '{}'", def),
+            AocError::InvalidInstruction(ref def) => write!(f, "Invalid instruction: '{}'", def),
+            AocError::InvalidProgram(ref def) => write!(f, "Invalid program: '{}'", def),
+            AocError::UnknownOperation(ref def) => write!(f, "Unknown operation: '{}'", def),
             AocError::IOError(ref err) => err.fmt(f),
             AocError::OsStringErr(ref err) => write!(f, "OsString error: {:?}", err),
             AocError::ParseIntError(ref err) => err.fmt(f),
