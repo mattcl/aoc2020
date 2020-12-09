@@ -1,5 +1,5 @@
-use aoc::xmas::Document;
 use aoc::util::load_input;
+use aoc::xmas::Document;
 use criterion::{black_box, criterion_group, BenchmarkId, Criterion};
 
 pub fn bench(c: &mut Criterion) {

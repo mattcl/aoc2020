@@ -1,22 +1,19 @@
-use itertools::Itertools;
 use crate::error::{AocError, Result};
+use itertools::Itertools;
 
 pub struct Document {
-    data: Vec<u64>
+    data: Vec<u64>,
 }
-
 
 impl Document {
     pub fn new(input: &[String]) -> std::result::Result<Self, std::num::ParseIntError> {
         // TODO: implement fromiterator for our custom error enum - MCL - 2020-12-08
-        Ok(
-            Document {
-                data: input
-                    .iter()
-                    .map(|line| line.parse::<u64>())
-                    .collect::<std::result::Result<Vec<u64>, std::num::ParseIntError>>()?
-            }
-        )
+        Ok(Document {
+            data: input
+                .iter()
+                .map(|line| line.parse::<u64>())
+                .collect::<std::result::Result<Vec<u64>, std::num::ParseIntError>>()?,
+        })
     }
 
     pub fn find_outlier(&self, preamble_size: usize) -> Result<u64> {
@@ -41,7 +38,7 @@ impl Document {
 
     pub fn find_weakness_slow(&self, target: u64) -> Result<u64> {
         for i in 0..self.data.len() - 2 {
-            for j in i+2..self.data.len() {
+            for j in i + 2..self.data.len() {
                 let sum = self.data[i..(j + 1)].iter().sum::<u64>();
                 if sum == target {
                     let mut max = 0;

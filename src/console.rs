@@ -1,5 +1,5 @@
-use rayon::prelude::*;
 use crate::error::{AocError, Result};
+use rayon::prelude::*;
 use std::collections::HashSet;
 
 #[derive(Eq, PartialEq, Clone, Debug)]
@@ -154,11 +154,9 @@ impl Program {
         let res = (0..self.instructions.len())
             .collect::<Vec<usize>>()
             .par_iter()
-            .filter(|i| {
-                match self.instructions.get(**i) {
-                    Some(ins) => ins.op != Op::Nop,
-                    None => false
-                }
+            .filter(|i| match self.instructions.get(**i) {
+                Some(ins) => ins.op != Op::Nop,
+                None => false,
             })
             .map(|i| {
                 let mut copy = self.clone();
@@ -186,7 +184,9 @@ impl Program {
             return Ok(*v);
         }
 
-        Err(AocError::InvalidProgram("Could not fix program".to_string()))
+        Err(AocError::InvalidProgram(
+            "Could not fix program".to_string(),
+        ))
     }
 
     pub fn correct_recursive(&mut self) -> Result<i64> {
