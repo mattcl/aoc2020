@@ -7,6 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+itertools = "0.9.0"
 rayon = "1.5.0"
 
 [dev-dependencies]
@@ -28,3 +29,11 @@ path = "examples/008_handheld-halting/profile/parallel.rs"
 [[example]]
 name = "008_profile_part2_recur"
 path = "examples/008_handheld-halting/profile/recursive.rs"
+
+[[example]]
+name = "009_profile_part2_fast"
+path = "examples/009_encoding-error/profile/part2_fast.rs"
+
+[[example]]
+name = "009_profile_part2_slow"
+path = "examples/009_encoding-error/profile/part2_slow.rs"

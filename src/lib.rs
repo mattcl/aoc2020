@@ -8,3 +8,4 @@ pub mod passport;
 pub mod password;
 pub mod toboggan;
 pub mod util;
+pub mod xmas;

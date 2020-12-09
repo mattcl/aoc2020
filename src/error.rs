@@ -23,6 +23,10 @@ pub enum AocError {
     InvalidProgram(String),
     UnknownOperation(String),
 
+    /// XMAS
+    NoOutlier,
+    NoWeakness,
+
     /// Represents all other cases of
     IOError(std::io::Error),
 
@@ -53,6 +57,8 @@ impl std::error::Error for AocError {
             AocError::InvalidInstruction(_) => None,
             AocError::InvalidProgram(_) => None,
             AocError::UnknownOperation(_) => None,
+            AocError::NoOutlier => None,
+            AocError::NoWeakness => None,
         }
     }
 }
@@ -87,6 +93,8 @@ impl std::fmt::Display for AocError {
             AocError::IOError(ref err) => err.fmt(f),
             AocError::OsStringErr(ref err) => write!(f, "OsString error: {:?}", err),
             AocError::ParseIntError(ref err) => err.fmt(f),
+            AocError::NoOutlier => write!(f, "No outlier found"),
+            AocError::NoWeakness => write!(f, "No weakness found"),
         }
     }
 }

@@ -1,0 +1,9 @@
+#!/bin/sh
+if [ $# -eq 0 ]
+  then echo "Usage: ./scripts/flame [day]\ne.g. ./scripts/flame 001"
+  exit 1;
+fi
+
+cargo run --example 2>&1 | grep "${1}_profile" | while read -r line; do
+  cargo flamegraph -o "${line}_flamegraph.svg" --dev --example $line
+done

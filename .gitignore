@@ -5,3 +5,4 @@ spirit.toml
 heaptrack.*
 perf.*
 flamegraph*
+*.svg
