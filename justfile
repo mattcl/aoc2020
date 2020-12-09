@@ -8,3 +8,8 @@ flame DAY:
   ./scripts/flame {{DAY}}
 
 perf DAY: (mem DAY) (flame DAY)
+
+clean:
+  rm *.svg
+  rm heaptrack*
+  rm perf*
