@@ -1,6 +1,6 @@
 #!/bin/sh
 if [ $# -eq 0 ]
-  then echo "Usage: ./run [day]\ne.g. ./run 001"
+  then echo "Usage: ./scripts/run [day]\ne.g. ./scripts/run 001"
   exit 1;
 fi
 
