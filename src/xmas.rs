@@ -94,14 +94,14 @@ impl Document {
             } else {
                 right += 1;
 
-                if right > self.data.len() {
+                if right >= self.data.len() {
                     break;
                 }
 
                 sum += self.data[right];
             }
 
-            if left == right || right >= self.data.len() {
+            if left == right {
                 break;
             }
         }
@@ -153,5 +153,7 @@ mod tests {
         let d = Document::new(&input()).unwrap();
         assert_eq!(d.find_weakness_slow(127).unwrap(), 62);
         assert_eq!(d.find_weakness(127).unwrap(), 62);
+        assert!(d.find_weakness(1).is_err());
+        assert!(d.find_weakness(1_000_000).is_err());
     }
 }
