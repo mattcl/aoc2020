@@ -127,6 +127,8 @@ fn recur(adapters: &[Adapter], start: usize, cache: &mut HashMap<usize, usize>) 
             } else {
                 local_count += recur(adapters, i, cache);
             }
+        } else {
+            break;
         }
     }
 
@@ -162,6 +164,8 @@ fn recur_faster(adapters: &[Adapter], start: usize, cache: &mut [i64]) -> i64 {
             } else {
                 local_count += recur_faster(adapters, i, cache);
             }
+        } else {
+            break;
         }
     }
 
@@ -192,6 +196,8 @@ fn recur_slow(adapters: &[Adapter], start: usize) -> usize {
     for i in (start + 1)..adapters.len() {
         if adapters[i].can_be_plugged_into(&adapters[start]) {
             local_count += recur_slow(adapters, i);
+        } else {
+            break;
         }
     }
 
