@@ -1,3 +1,4 @@
+pub mod adapter;
 pub mod boarding;
 pub mod console;
 pub mod customs;

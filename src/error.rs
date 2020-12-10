@@ -6,7 +6,6 @@ pub type Result<T> = std::result::Result<T, AocError>;
 #[derive(Debug)]
 pub enum AocError {
     ForestDefinitionError(String),
-    InputError(String),
     InvalidAnswers(String),
     InvalidLocator(String),
     InvalidRule(String),
@@ -18,6 +17,10 @@ pub enum AocError {
 
     UnknownBag(String),
 
+    /// Generic
+    InputError(String),
+    InvalidInput(String),
+
     /// console
     InvalidInstruction(String),
     InvalidProgram(String),
@@ -26,6 +29,9 @@ pub enum AocError {
     /// XMAS
     NoOutlier,
     NoWeakness,
+
+    /// Adapter
+    NoAdapterChain,
 
     /// Represents all other cases of
     IOError(std::io::Error),
@@ -42,6 +48,7 @@ impl std::error::Error for AocError {
         match *self {
             AocError::ForestDefinitionError(_) => None,
             AocError::InputError(_) => None,
+            AocError::InvalidInput(_) => None,
             AocError::InvalidAnswers(_) => None,
             AocError::InvalidLocator(_) => None,
             AocError::InvalidRule(_) => None,
@@ -59,6 +66,7 @@ impl std::error::Error for AocError {
             AocError::UnknownOperation(_) => None,
             AocError::NoOutlier => None,
             AocError::NoWeakness => None,
+            AocError::NoAdapterChain => None,
         }
     }
 }
@@ -67,6 +75,7 @@ impl std::fmt::Display for AocError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match *self {
             AocError::InputError(ref def) => write!(f, "Could not load input: '{}'", def),
+            AocError::InvalidInput(ref def) => write!(f, "Invalid input: '{}'", def),
             AocError::InvalidAnswers(ref def) => write!(f, "Customs answers invalid: '{}'", def),
             AocError::InvalidLocator(ref def) => write!(f, "Invalid locator: '{}'", def),
             AocError::InvalidRule(ref def) => write!(f, "Invalid rule: '{}'", def),
@@ -95,6 +104,7 @@ impl std::fmt::Display for AocError {
             AocError::ParseIntError(ref err) => err.fmt(f),
             AocError::NoOutlier => write!(f, "No outlier found"),
             AocError::NoWeakness => write!(f, "No weakness found"),
+            AocError::NoAdapterChain => write!(f, "No adapter chian found"),
         }
     }
 }

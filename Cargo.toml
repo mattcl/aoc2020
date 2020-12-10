@@ -37,3 +37,11 @@ path = "examples/009_encoding-error/profile/part2_fast.rs"
 [[example]]
 name = "009_profile_part2_slow"
 path = "examples/009_encoding-error/profile/part2_slow.rs"
+
+[[example]]
+name = "010_profile_part2_fast"
+path = "examples/010_adapter-array/profile/permutations_fast.rs"
+
+[[example]]
+name = "010_profile_part2_faster"
+path = "examples/010_adapter-array/profile/permutations_faster.rs"
