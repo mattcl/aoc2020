@@ -33,6 +33,11 @@ pub fn load_input(day: &str) -> Result<Vec<String>> {
     )))
 }
 
+pub fn test_input(input: &str) -> Vec<String> {
+    // TODO: figure out if trim is the right thing to do - MCL - 2020-12-10
+    input.trim().split('\n').map(|s| s.trim().to_string()).collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

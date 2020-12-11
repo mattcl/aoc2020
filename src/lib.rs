@@ -7,6 +7,7 @@ pub mod expense;
 pub mod luggage;
 pub mod passport;
 pub mod password;
+pub mod seating;
 pub mod toboggan;
 pub mod util;
 pub mod xmas;

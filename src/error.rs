@@ -33,6 +33,9 @@ pub enum AocError {
     /// Adapter
     NoAdapterChain,
 
+    /// Seating
+    SeatDoesNotExist((usize, usize)),
+
     /// Represents all other cases of
     IOError(std::io::Error),
 
@@ -67,6 +70,7 @@ impl std::error::Error for AocError {
             AocError::NoOutlier => None,
             AocError::NoWeakness => None,
             AocError::NoAdapterChain => None,
+            AocError::SeatDoesNotExist(_) => None,
         }
     }
 }
@@ -105,6 +109,7 @@ impl std::fmt::Display for AocError {
             AocError::NoOutlier => write!(f, "No outlier found"),
             AocError::NoWeakness => write!(f, "No weakness found"),
             AocError::NoAdapterChain => write!(f, "No adapter chian found"),
+            AocError::SeatDoesNotExist(ref pos) => write!(f, "Seast does not exist: '{:?}'", pos),
         }
     }
 }
