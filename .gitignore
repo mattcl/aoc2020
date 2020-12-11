@@ -6,3 +6,5 @@ heaptrack.*
 perf.*
 flamegraph*
 *.svg
+
+examples/template
