@@ -6,8 +6,7 @@ pub struct Document {
 }
 
 impl Document {
-    pub fn new(input: &[String]) -> std::result::Result<Self, std::num::ParseIntError> {
-        // TODO: implement fromiterator for our custom error enum - MCL - 2020-12-08
+    pub fn new(input: &[String]) -> Result<Self> {
         Ok(Document {
             data: input
                 .iter()
