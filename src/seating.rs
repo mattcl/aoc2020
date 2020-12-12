@@ -284,7 +284,8 @@ mod tests {
 
         #[test]
         fn occupied_seats() {
-            let state = test_input("
+            let state = test_input(
+                "
                  #.#L.L#.##
                  #LLL#LL.L#
                  L.#.L..#..
@@ -294,7 +295,7 @@ mod tests {
                  ..L.L.....
                  #L#L##L#L#
                  #.LLLLLL.L
-                 #.#L#L#.##"
+                 #.#L#L#.##",
             );
 
             let a = Area::new(&state, Some(1), 4).unwrap();

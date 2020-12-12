@@ -35,12 +35,40 @@ pub fn load_input(day: &str) -> Result<Vec<String>> {
 
 pub fn test_input(input: &str) -> Vec<String> {
     // TODO: figure out if trim is the right thing to do - MCL - 2020-12-10
-    input.trim().split('\n').map(|s| s.trim().to_string()).collect()
+    input
+        .trim()
+        .split('\n')
+        .map(|s| s.trim().to_string())
+        .collect()
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    // TODO: write tests - MCL - 2020-12-03
+    #[test]
+    fn test_input_conversion() {
+        let expected = vec![
+            "abcd".to_string(),
+            "".to_string(),
+            "".to_string(),
+            "efgh".to_string(),
+            "ijkl".to_string(),
+            "mnop".to_string(),
+            "".to_string(),
+            "qrs".to_string(),
+        ];
+
+        let input = "
+            abcd
+
+
+            efgh
+            ijkl
+            mnop
+
+            qrs
+        ";
+        assert_eq!(test_input(input), expected);
+    }
 }

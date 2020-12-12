@@ -5,6 +5,7 @@ pub mod customs;
 pub mod error;
 pub mod expense;
 pub mod luggage;
+pub mod navigation;
 pub mod passport;
 pub mod password;
 pub mod seating;
