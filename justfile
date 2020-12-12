@@ -10,6 +10,7 @@ flame DAY:
 perf DAY: (mem DAY) (flame DAY)
 
 clean:
-  rm *.svg
-  rm heaptrack*
-  rm perf*
+  rm *.svg || true
+  rm heaptrack* || true
+  rm perf* || true
+
