@@ -9,6 +9,7 @@ pub mod navigation;
 pub mod passport;
 pub mod password;
 pub mod seating;
+pub mod shuttle;
 pub mod toboggan;
 pub mod util;
 pub mod xmas;

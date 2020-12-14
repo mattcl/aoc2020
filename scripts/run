@@ -6,4 +6,4 @@ fi
 
 example=$(find examples -type d -name "${1}*" -exec basename {} \;)
 
-cargo run --example=$example
+cargo run --example=$example --release
