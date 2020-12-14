@@ -2,6 +2,7 @@ pub mod adapter;
 pub mod boarding;
 pub mod console;
 pub mod customs;
+pub mod docking;
 pub mod error;
 pub mod expense;
 pub mod luggage;
