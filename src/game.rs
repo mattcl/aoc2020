@@ -34,10 +34,7 @@ impl History {
 
     pub fn delta(&self) -> Result<usize> {
         if self.calls < 2 {
-            return Err(AocError::GameError(format!(
-                "History too short: {:?}",
-                self
-            )));
+            return Err(AocError::GameError("History too short".to_string()));
         }
         Ok(self.last - self.prev)
     }
