@@ -36,6 +36,9 @@ pub enum AocError {
     /// Seating
     SeatDoesNotExist((usize, usize)),
 
+    /// Memory Game
+    GameError(String),
+
     /// Represents all other cases of
     IOError(std::io::Error),
 
@@ -71,6 +74,7 @@ impl std::error::Error for AocError {
             AocError::NoWeakness => None,
             AocError::NoAdapterChain => None,
             AocError::SeatDoesNotExist(_) => None,
+            AocError::GameError(_) => None,
         }
     }
 }
@@ -110,6 +114,7 @@ impl std::fmt::Display for AocError {
             AocError::NoWeakness => write!(f, "No weakness found"),
             AocError::NoAdapterChain => write!(f, "No adapter chian found"),
             AocError::SeatDoesNotExist(ref pos) => write!(f, "Seast does not exist: '{:?}'", pos),
+            AocError::GameError(ref msg) => write!(f, "Memory game error: '{}'", msg),
         }
     }
 }

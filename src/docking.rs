@@ -1,11 +1,10 @@
-use std::collections::HashMap;
 use crate::error::{AocError, Result};
+use std::collections::HashMap;
 use std::str::FromStr;
-
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Program {
-    memory: HashMap<usize, u64>
+    memory: HashMap<usize, u64>,
 }
 
 impl Program {
@@ -28,7 +27,6 @@ impl Program {
     }
 }
 
-
 #[derive(Debug, Clone, Eq, PartialEq)]
 struct Mask {
     raw: Vec<char>,
@@ -38,13 +36,11 @@ struct Mask {
 
 impl Mask {
     pub fn new(s: &str) -> Result<Self> {
-        Ok(
-            Mask {
-                raw: s.chars().collect(),
-                and: u64::from_str_radix(&s.replace("X", "1"), 2)?,
-                or: u64::from_str_radix(&s.replace("X", "0"), 2)?,
-            }
-        )
+        Ok(Mask {
+            raw: s.chars().collect(),
+            and: u64::from_str_radix(&s.replace("X", "1"), 2)?,
+            or: u64::from_str_radix(&s.replace("X", "0"), 2)?,
+        })
     }
 
     pub fn apply(&self, val: u64) -> u64 {
@@ -58,7 +54,7 @@ impl Mask {
         Ok(addresses)
     }
 
-    fn recur(&self, index: usize, addr: &mut [char], acc: &mut Vec<usize>) -> Result<()>{
+    fn recur(&self, index: usize, addr: &mut [char], acc: &mut Vec<usize>) -> Result<()> {
         if index >= self.raw.len() {
             acc.push(usize::from_str_radix(&addr.iter().collect::<String>(), 2)?);
             return Ok(());
@@ -70,7 +66,7 @@ impl Mask {
                     *ch = '1';
                 }
                 self.recur(index + 1, addr, acc)?;
-            },
+            }
             'X' => {
                 if let Some(ch) = addr.get_mut(index) {
                     *ch = '1';
@@ -81,7 +77,7 @@ impl Mask {
                     *ch = '0';
                 }
                 self.recur(index + 1, addr, acc)?;
-            },
+            }
             '0' => self.recur(index + 1, addr, acc)?,
             _ => unreachable!(),
         }
@@ -89,7 +85,10 @@ impl Mask {
         Ok(())
     }
 
-    pub fn apply_address_memoized(&self, addr: usize) -> std::result::Result<Vec<usize>, std::num::ParseIntError> {
+    pub fn apply_address_memoized(
+        &self,
+        addr: usize,
+    ) -> std::result::Result<Vec<usize>, std::num::ParseIntError> {
         let mut addr = format!("{:036b}", addr).chars().collect::<Vec<char>>();
         let mut cache = HashMap::new();
         self.recur_memoized(0, &mut addr, &mut cache)
@@ -102,7 +101,7 @@ impl Mask {
         &self,
         index: usize,
         addr: &mut [char],
-        cache: &mut HashMap<usize, Vec<String>>
+        cache: &mut HashMap<usize, Vec<String>>,
     ) -> Vec<String> {
         if index >= self.raw.len() {
             return vec![String::new()];
@@ -123,7 +122,7 @@ impl Mask {
                         .iter()
                         .map(|s| format!("1{}", s))
                         .for_each(|s| strings.push(s));
-                },
+                }
                 'X' => {
                     if let Some(ch) = addr.get_mut(index) {
                         *ch = '1';
@@ -140,7 +139,7 @@ impl Mask {
                         .iter()
                         .map(|s| format!("0{}", s))
                         .for_each(|s| strings.push(s));
-                },
+                }
                 '0' => {
                     self.recur_memoized(index + 1, addr, cache)
                         .iter()
@@ -157,7 +156,6 @@ impl Mask {
     }
 }
 
-
 #[derive(Debug, Clone, Eq, PartialEq)]
 enum Instruction {
     Mask(String),
@@ -172,11 +170,14 @@ impl FromStr for Instruction {
         if let Some(left) = parts.next() {
             if let Some(right) = parts.next() {
                 if let Some(_extra) = parts.next() {
-                    return Err(AocError::InvalidInput(format!("Instruction has too many components: '{}'", s)));
+                    return Err(AocError::InvalidInput(format!(
+                        "Instruction has too many components: '{}'",
+                        s
+                    )));
                 }
 
                 match left {
-                    "mask" => { return Ok(Instruction::Mask(right.to_string())) }
+                    "mask" => return Ok(Instruction::Mask(right.to_string())),
                     _ => {
                         if left.starts_with("mem[") {
                             let addr = left
@@ -191,10 +192,12 @@ impl FromStr for Instruction {
                 };
             }
         }
-        Err(AocError::InvalidInput(format!("Cannot parse instruction: '{}'", s)))
+        Err(AocError::InvalidInput(format!(
+            "Cannot parse instruction: '{}'",
+            s
+        )))
     }
 }
-
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Initializer;
@@ -211,7 +214,9 @@ impl Initializer {
 
         for instruction in &instructions {
             match instruction {
-                Instruction::Mask(m) => {mask = Some(Mask::new(m)?); },
+                Instruction::Mask(m) => {
+                    mask = Some(Mask::new(m)?);
+                }
                 Instruction::Assign(addr, value) => {
                     // apply mask to value
                     if let Some(ref mask) = mask {
@@ -222,7 +227,6 @@ impl Initializer {
                 }
             }
         }
-
 
         Ok(program)
     }
@@ -238,12 +242,13 @@ impl Initializer {
 
         for instruction in &instructions {
             match instruction {
-                Instruction::Mask(m) => {mask = Some(Mask::new(m)?); },
+                Instruction::Mask(m) => {
+                    mask = Some(Mask::new(m)?);
+                }
                 Instruction::Assign(addr, value) => {
                     // apply mask to value
                     if let Some(ref mask) = mask {
-                        mask
-                            .apply_address(*addr)?
+                        mask.apply_address(*addr)?
                             .iter()
                             .for_each(|a| program.set(*a, *value));
                     } else {
@@ -252,7 +257,6 @@ impl Initializer {
                 }
             }
         }
-
 
         Ok(program)
     }
@@ -268,12 +272,13 @@ impl Initializer {
 
         for instruction in &instructions {
             match instruction {
-                Instruction::Mask(m) => {mask = Some(Mask::new(m)?); },
+                Instruction::Mask(m) => {
+                    mask = Some(Mask::new(m)?);
+                }
                 Instruction::Assign(addr, value) => {
                     // apply mask to value
                     if let Some(ref mask) = mask {
-                        mask
-                            .apply_address_memoized(*addr)?
+                        mask.apply_address_memoized(*addr)?
                             .iter()
                             .for_each(|a| program.set(*a, *value));
                     } else {
@@ -282,7 +287,6 @@ impl Initializer {
                 }
             }
         }
-
 
         Ok(program)
     }
@@ -316,14 +320,10 @@ mod tests {
             );
 
             let input = "mem[ajifjaioe] = 23975525";
-            assert!(
-                Instruction::from_str(input).is_err()
-            );
+            assert!(Instruction::from_str(input).is_err());
 
             let input = "foo = 23975525";
-            assert!(
-                Instruction::from_str(input).is_err()
-            );
+            assert!(Instruction::from_str(input).is_err());
         }
     }
 
@@ -368,7 +368,6 @@ mod tests {
             for i in m.apply_address(42).unwrap() {
                 assert!(expected.contains(&i));
             }
-
         }
     }
 
@@ -378,12 +377,14 @@ mod tests {
 
         #[test]
         fn initialize() {
-            let input = test_input("
+            let input = test_input(
+                "
                 mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X
                 mem[8] = 11
                 mem[7] = 101
                 mem[8] = 0
-            ");
+            ",
+            );
 
             let program = Initializer::initialize(&input).unwrap();
 
@@ -394,12 +395,14 @@ mod tests {
 
         #[test]
         fn initialize_v2() {
-            let input = test_input("
+            let input = test_input(
+                "
                 mask = 000000000000000000000000000000X1001X
                 mem[42] = 100
                 mask = 00000000000000000000000000000000X0XX
                 mem[26] = 1
-            ");
+            ",
+            );
 
             let program = Initializer::initialize_v2(&input).unwrap();
 

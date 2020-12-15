@@ -45,3 +45,11 @@ path = "examples/010_adapter-array/profile/permutations_fast.rs"
 [[example]]
 name = "010_profile_part2_faster"
 path = "examples/010_adapter-array/profile/permutations_faster.rs"
+
+[[example]]
+name = "015_profile_part1"
+path = "examples/015_rambunctious-recitation/profile/part_one.rs"
+
+[[example]]
+name = "015_profile_part2"
+path = "examples/015_rambunctious-recitation/profile/part_two.rs"

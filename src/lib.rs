@@ -5,6 +5,7 @@ pub mod customs;
 pub mod docking;
 pub mod error;
 pub mod expense;
+pub mod game;
 pub mod luggage;
 pub mod navigation;
 pub mod passport;

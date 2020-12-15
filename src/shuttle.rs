@@ -1,6 +1,6 @@
 use crate::error::{AocError, Result};
-use std::str::FromStr;
 use std::fmt;
+use std::str::FromStr;
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub struct Bus {
@@ -16,11 +16,11 @@ impl Bus {
         }
     }
 
-    pub fn id(&self) -> usize  {
+    pub fn id(&self) -> usize {
         self.id
     }
 
-    pub fn in_service(&self) -> bool  {
+    pub fn in_service(&self) -> bool {
         self.in_service
     }
 
@@ -35,23 +35,26 @@ impl fmt::Display for Bus {
     }
 }
 
-
 impl FromStr for Bus {
     type Err = AocError;
 
     fn from_str(s: &str) -> Result<Self> {
         match s {
-            "x" => Ok(Bus {id: 0, in_service: false}),
-            _ => Ok(Bus {id: s.parse::<usize>()?, in_service: true})
+            "x" => Ok(Bus {
+                id: 0,
+                in_service: false,
+            }),
+            _ => Ok(Bus {
+                id: s.parse::<usize>()?,
+                in_service: true,
+            }),
         }
     }
 }
 
-
-
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Schedule {
-    buses: Vec<Bus>
+    buses: Vec<Bus>,
 }
 
 impl Schedule {
@@ -97,10 +100,12 @@ impl Schedule {
         let first_intersection = self.calc_first_intersection(max_offset, second_max_offset);
         let mut g = Generator::new(max, second_max, first_intersection, max_offset);
 
-        let buses = self.buses
+        let buses = self
+            .buses
             .iter()
             .enumerate()
-            .filter(|(_, bus)| bus.in_service()).collect::<Vec<(usize, &Bus)>>();
+            .filter(|(_, bus)| bus.in_service())
+            .collect::<Vec<(usize, &Bus)>>();
 
         if max > 0 {
             loop {
@@ -140,14 +145,14 @@ impl FromStr for Schedule {
     type Err = AocError;
 
     fn from_str(s: &str) -> Result<Self> {
-        Ok(
-            Schedule {
-                buses: s.split(',').map(|slice| Bus::from_str(slice)).collect::<Result<Vec<Bus>>>()?
-            }
-        )
+        Ok(Schedule {
+            buses: s
+                .split(',')
+                .map(|slice| Bus::from_str(slice))
+                .collect::<Result<Vec<Bus>>>()?,
+        })
     }
 }
-
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Generator {
@@ -158,7 +163,6 @@ pub struct Generator {
     pub left_offset: usize,
 }
 
-
 impl Generator {
     pub fn new(left: usize, right: usize, first_intersection: usize, left_offset: usize) -> Self {
         let base = (first_intersection + left_offset) / left;
@@ -167,7 +171,7 @@ impl Generator {
             right: right,
             base: base,
             n: 0,
-            left_offset: left_offset
+            left_offset: left_offset,
         }
     }
 
@@ -190,10 +194,34 @@ mod tests {
 
         #[test]
         fn from_str() {
-            assert_eq!(Bus::from_str("x").unwrap(), Bus {id: 0, in_service: false});
-            assert_eq!(Bus::from_str("1").unwrap(), Bus {id: 1, in_service: true});
-            assert_eq!(Bus::from_str("111").unwrap(), Bus {id: 111, in_service: true});
-            assert_eq!(Bus::from_str("45").unwrap(), Bus {id: 45, in_service: true});
+            assert_eq!(
+                Bus::from_str("x").unwrap(),
+                Bus {
+                    id: 0,
+                    in_service: false
+                }
+            );
+            assert_eq!(
+                Bus::from_str("1").unwrap(),
+                Bus {
+                    id: 1,
+                    in_service: true
+                }
+            );
+            assert_eq!(
+                Bus::from_str("111").unwrap(),
+                Bus {
+                    id: 111,
+                    in_service: true
+                }
+            );
+            assert_eq!(
+                Bus::from_str("45").unwrap(),
+                Bus {
+                    id: 45,
+                    in_service: true
+                }
+            );
             assert!(Bus::from_str("a").is_err());
         }
     }
@@ -224,11 +252,14 @@ mod tests {
                 loop {
                     if (cur + self.right.0) % self.right.1.id() == 0 {
                         count += 1;
-                        vals.push(Intersect {pair: self.clone(), time: cur});
+                        vals.push(Intersect {
+                            pair: self.clone(),
+                            time: cur,
+                        });
                     }
 
                     if count >= n {
-                        break
+                        break;
                     }
 
                     cur += self.left.1.id();
@@ -259,7 +290,14 @@ mod tests {
 
         impl fmt::Display for Intersect {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-                write!(f, "{} - {} - left {} right {}", self.pair, self.time, self.detail(&self.pair.left), self.detail(&self.pair.right))
+                write!(
+                    f,
+                    "{} - {} - left {} right {}",
+                    self.pair,
+                    self.time,
+                    self.detail(&self.pair.left),
+                    self.detail(&self.pair.right)
+                )
             }
         }
 
@@ -269,15 +307,39 @@ mod tests {
 
             let expected = Schedule {
                 buses: vec![
-                    Bus {id: 7, in_service: true},
-                    Bus {id: 13, in_service: true},
-                    Bus {id: 0, in_service: false},
-                    Bus {id: 0, in_service: false},
-                    Bus {id: 59, in_service: true},
-                    Bus {id: 0, in_service: false},
-                    Bus {id: 31, in_service: true},
-                    Bus {id: 19, in_service: true},
-                ]
+                    Bus {
+                        id: 7,
+                        in_service: true,
+                    },
+                    Bus {
+                        id: 13,
+                        in_service: true,
+                    },
+                    Bus {
+                        id: 0,
+                        in_service: false,
+                    },
+                    Bus {
+                        id: 0,
+                        in_service: false,
+                    },
+                    Bus {
+                        id: 59,
+                        in_service: true,
+                    },
+                    Bus {
+                        id: 0,
+                        in_service: false,
+                    },
+                    Bus {
+                        id: 31,
+                        in_service: true,
+                    },
+                    Bus {
+                        id: 19,
+                        in_service: true,
+                    },
+                ],
             };
 
             assert_eq!(Schedule::from_str(input).unwrap(), expected);
@@ -288,7 +350,16 @@ mod tests {
             let input = "7,13,x,x,59,x,31,19";
             let s = Schedule::from_str(input).unwrap();
 
-            assert_eq!(s.earliest_departure(939), Some((5, Bus {id: 59, in_service: true})));
+            assert_eq!(
+                s.earliest_departure(939),
+                Some((
+                    5,
+                    Bus {
+                        id: 59,
+                        in_service: true
+                    }
+                ))
+            );
         }
 
         #[test]
@@ -303,9 +374,9 @@ mod tests {
             let input = "7,13,x,x,59,x,31,19";
             for i in 0..1 {
                 println!("-------------------------------------");
-                let left = Slot(i+4, Bus::new(59));
+                let left = Slot(i + 4, Bus::new(59));
                 let right = Slot(6, Bus::new(31));
-                let pair = Pair {left, right};
+                let pair = Pair { left, right };
                 for intersect in pair.intersections(3) {
                     println!("{}", intersect);
                 }
@@ -315,7 +386,7 @@ mod tests {
                 println!("-------------------------------------");
                 let left = Slot(i, Bus::new(7));
                 let right = Slot(1, Bus::new(13));
-                let pair = Pair {left, right};
+                let pair = Pair { left, right };
                 for intersect in pair.intersections(3) {
                     println!("{}", intersect);
                 }
@@ -323,9 +394,9 @@ mod tests {
 
             for i in 0..1 {
                 println!("-------------------------------------");
-                let left = Slot(i+1, Bus::new(13));
+                let left = Slot(i + 1, Bus::new(13));
                 let right = Slot(4, Bus::new(59));
-                let pair = Pair {left, right};
+                let pair = Pair { left, right };
                 for intersect in pair.intersections(3) {
                     println!("{}", intersect);
                 }
@@ -335,7 +406,7 @@ mod tests {
                 println!("-------------------------------------");
                 let left = Slot(i, Bus::new(7));
                 let right = Slot(6, Bus::new(31));
-                let pair = Pair {left, right};
+                let pair = Pair { left, right };
                 for intersect in pair.intersections(3) {
                     println!("{}", intersect);
                 }
@@ -345,7 +416,7 @@ mod tests {
                 println!("-------------------------------------");
                 let left = Slot(i, Bus::new(7));
                 let right = Slot(7, Bus::new(19));
-                let pair = Pair {left, right};
+                let pair = Pair { left, right };
                 for intersect in pair.intersections(3) {
                     println!("{}", intersect);
                 }
@@ -371,7 +442,6 @@ mod tests {
             }
         }
 
-
         fn find_intersections(input: &str, one: usize, two: usize) {
             println!("{}", input);
             let mut first_intersection = 0;
@@ -379,7 +449,8 @@ mod tests {
 
             let mut count = 0;
             for i in 0..40000 {
-                let buses = s.buses
+                let buses = s
+                    .buses
                     .iter()
                     .enumerate()
                     .filter(|(_, bus)| bus.id() == one || bus.id() == two)
