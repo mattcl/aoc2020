@@ -88,71 +88,57 @@ impl Mask {
     pub fn apply_address_memoized(
         &self,
         addr: usize,
-    ) -> std::result::Result<Vec<usize>, std::num::ParseIntError> {
-        let mut addr = format!("{:036b}", addr).chars().collect::<Vec<char>>();
+    ) -> Result<Vec<usize>> {
+        let addr = format!("{:036b}", addr).chars().collect::<Vec<char>>();
         let mut cache = HashMap::new();
-        self.recur_memoized(0, &mut addr, &mut cache)
-            .iter()
-            .map(|a| usize::from_str_radix(a, 2))
-            .collect::<std::result::Result<Vec<usize>, std::num::ParseIntError>>()
+        Ok(self.recur_memoized(0, &addr, &mut cache))
     }
 
     fn recur_memoized(
         &self,
         index: usize,
-        addr: &mut [char],
-        cache: &mut HashMap<usize, Vec<String>>,
-    ) -> Vec<String> {
+        addr: &[char],
+        cache: &mut HashMap<usize, Vec<usize>>,
+    ) -> Vec<usize> {
         if index >= self.raw.len() {
-            return vec![String::new()];
+            return vec![0];
         }
 
         // cur string + append char
-        let mut strings = Vec::new();
+        let mut addrs = Vec::new();
 
         if let Some(vals) = cache.get(&index) {
             return vals.clone();
         } else {
+            let base: usize = 2;
+            let val = base.pow((36 - index) as u32);
             match self.raw[index] {
                 '1' => {
-                    if let Some(ch) = addr.get_mut(index) {
-                        *ch = '1';
-                    }
                     self.recur_memoized(index + 1, addr, cache)
                         .iter()
-                        .map(|s| format!("1{}", s))
-                        .for_each(|s| strings.push(s));
+                        .map(|a| a + val)
+                        .for_each(|a| addrs.push(a));
                 }
                 'X' => {
-                    if let Some(ch) = addr.get_mut(index) {
-                        *ch = '1';
-                    }
                     self.recur_memoized(index + 1, addr, cache)
                         .iter()
-                        .map(|s| format!("1{}", s))
-                        .for_each(|s| strings.push(s));
-
-                    if let Some(ch) = addr.get_mut(index) {
-                        *ch = '0';
-                    }
-                    self.recur_memoized(index + 1, addr, cache)
-                        .iter()
-                        .map(|s| format!("0{}", s))
-                        .for_each(|s| strings.push(s));
+                        .for_each(|a| {
+                            addrs.push(a + val);
+                            addrs.push(*a);
+                        });
                 }
                 '0' => {
                     self.recur_memoized(index + 1, addr, cache)
                         .iter()
-                        .map(|s| format!("{}{}", addr[index], s))
-                        .for_each(|s| strings.push(s));
+                        .for_each(|a| addrs.push(*a));
                 }
                 _ => unreachable!(),
             }
         }
 
-        cache.insert(index, strings.clone());
+        cache.insert(index, addrs.clone());
 
-        strings
+        addrs
     }
 }
 
