@@ -8,10 +8,11 @@ pub fn bench(c: &mut Criterion) {
     let lines = load_input("015").expect("could not load input");
 
     group.bench_function(BenchmarkId::new("take turns", "normal"), |b| {
-        let mut game = Game::from_str(lines.first().expect("no lines in input"))
+        let game = Game::from_str(lines.first().expect("no lines in input"))
             .expect("could not initialize game");
 
         b.iter(|| {
+            let mut game = game.clone();
             while game.get_turn() <= 2020 {
                 game.take_turn().expect("could not take turn");
             }
@@ -22,10 +23,11 @@ pub fn bench(c: &mut Criterion) {
 
     let mut group = c.benchmark_group("015 rambunctious recitation part 2");
     group.bench_function(BenchmarkId::new("take turns", "normal"), |b| {
-        let mut game = Game::from_str(lines.first().expect("no lines in input"))
+        let game = Game::from_str(lines.first().expect("no lines in input"))
             .expect("could not initialize game");
 
         b.iter(|| {
+            let mut game = game.clone();
             while game.get_turn() <= 30_000_000 {
                 game.take_turn().expect("could not take turn");
             }
