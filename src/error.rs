@@ -39,6 +39,9 @@ pub enum AocError {
     /// Memory Game
     GameError(String),
 
+    /// Ticket rules
+    NoValidRuleOrder,
+
     /// Represents all other cases of
     IOError(std::io::Error),
 
@@ -75,6 +78,7 @@ impl std::error::Error for AocError {
             AocError::NoAdapterChain => None,
             AocError::SeatDoesNotExist(_) => None,
             AocError::GameError(_) => None,
+            AocError::NoValidRuleOrder => None,
         }
     }
 }
@@ -115,6 +119,7 @@ impl std::fmt::Display for AocError {
             AocError::NoAdapterChain => write!(f, "No adapter chian found"),
             AocError::SeatDoesNotExist(ref pos) => write!(f, "Seast does not exist: '{:?}'", pos),
             AocError::GameError(ref msg) => write!(f, "Memory game error: '{}'", msg),
+            AocError::NoValidRuleOrder => write!(f, "No rule order could be determined"),
         }
     }
 }

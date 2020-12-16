@@ -7,7 +7,10 @@ mem DAY:
 flame DAY:
   ./scripts/flame {{DAY}}
 
-perf DAY: (mem DAY) (flame DAY)
+bench DAY:
+  cargo bench -- {{DAY}}
+
+perf DAY: (mem DAY) (flame DAY) (bench DAY)
 
 clean:
   rm *.svg || true
