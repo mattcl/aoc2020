@@ -17,18 +17,15 @@ pub fn bench(c: &mut Criterion) {
             .next()
             .expect("invalid input, missing our ticket")
             .get(1)
-            .expect("invalid input, missing our ticket values")
-        ).expect("could not make our ticket");
+            .expect("invalid input, missing our ticket values"),
+    )
+    .expect("could not make our ticket");
 
-    let mut other_tickets = parts
-        .next()
-        .expect("invalid input, no nearby tickets")
-        [1..]
+    let mut other_tickets = parts.next().expect("invalid input, no nearby tickets")[1..]
         .iter()
         .map(|ticket| Ticket::from_str(ticket))
         .collect::<Result<Vec<Ticket>>>()
         .expect("could not make other tickets");
-
 
     let mut group = c.benchmark_group("016 ticket translation part 1");
     group.bench_function(BenchmarkId::new("find invalid tickets", "normal"), |b| {
@@ -55,11 +52,16 @@ pub fn bench(c: &mut Criterion) {
             }
         }
 
-        let valid_tickets = other_tickets.into_iter().filter(|ticket| ticket.is_valid).collect::<Vec<Ticket>>();
+        let valid_tickets = other_tickets
+            .into_iter()
+            .filter(|ticket| ticket.is_valid)
+            .collect::<Vec<Ticket>>();
 
         b.iter(|| {
             let mut validator = validator.clone();
-            validator.determine_rule_order_fast(&valid_tickets).expect("could not determine rule order");
+            validator
+                .determine_rule_order_fast(&valid_tickets)
+                .expect("could not determine rule order");
         })
     });
 

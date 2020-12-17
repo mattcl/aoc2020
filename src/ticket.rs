@@ -1,7 +1,6 @@
-use std::collections::{HashMap, HashSet};
 use crate::error::{AocError, Result};
+use std::collections::{HashMap, HashSet};
 use std::str::FromStr;
-
 
 #[derive(Debug, Eq, PartialEq, Clone, Hash)]
 pub struct Range(usize, usize);
@@ -21,27 +20,35 @@ impl FromStr for Range {
         if let Some(lower) = parts.next() {
             if let Some(upper) = parts.next() {
                 if let Some(_) = parts.next() {
-                    return Err(AocError::InvalidInput(format!("Cannot make range from '{}'", s)));
+                    return Err(AocError::InvalidInput(format!(
+                        "Cannot make range from '{}'",
+                        s
+                    )));
                 }
 
                 let range = Range(lower.parse::<usize>()?, upper.parse::<usize>()?);
 
                 if range.0 > range.1 {
-                    return Err(AocError::InvalidInput(format!("Cannot make range from (low is higher than high) '{}'", s)));
+                    return Err(AocError::InvalidInput(format!(
+                        "Cannot make range from (low is higher than high) '{}'",
+                        s
+                    )));
                 }
 
                 return Ok(range);
             }
         }
-        Err(AocError::InvalidInput(format!("Cannot make range from '{}'", s)))
+        Err(AocError::InvalidInput(format!(
+            "Cannot make range from '{}'",
+            s
+        )))
     }
 }
-
 
 #[derive(Debug, Eq, PartialEq, Clone, Hash)]
 pub struct Rule {
     pub name: String,
-    pub ranges: Vec<Range>
+    pub ranges: Vec<Range>,
 }
 
 impl Rule {
@@ -63,7 +70,6 @@ impl Rule {
     }
 }
 
-
 impl FromStr for Rule {
     type Err = AocError;
 
@@ -72,25 +78,33 @@ impl FromStr for Rule {
 
         if let Some(name) = parts.next() {
             if let Some(ranges) = parts.next() {
-                let ranges = ranges.split(" or ").map(|r| Range::from_str(r)).collect::<Result<Vec<Range>>>()?;
+                let ranges = ranges
+                    .split(" or ")
+                    .map(|r| Range::from_str(r))
+                    .collect::<Result<Vec<Range>>>()?;
 
                 if ranges.is_empty() {
-                    return Err(AocError::InvalidInput(format!("Cannot make rule from '{}'", s)));
+                    return Err(AocError::InvalidInput(format!(
+                        "Cannot make rule from '{}'",
+                        s
+                    )));
                 }
 
                 return Ok(Rule::new(name, &ranges));
             }
         }
 
-        Err(AocError::InvalidInput(format!("Cannot make rule from '{}'", s)))
+        Err(AocError::InvalidInput(format!(
+            "Cannot make rule from '{}'",
+            s
+        )))
     }
 }
-
 
 #[derive(Debug, Eq, PartialEq, Clone, Hash)]
 pub struct Ticket {
     pub values: Vec<usize>,
-    pub is_valid: bool
+    pub is_valid: bool,
 }
 
 impl Ticket {
@@ -115,21 +129,24 @@ impl FromStr for Ticket {
     }
 }
 
-
-
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub struct TicketValidator {
-    pub rules: Vec<Rule>
+    pub rules: Vec<Rule>,
 }
 
 impl TicketValidator {
     pub fn from_input(input: &[String]) -> Result<Self> {
-        Ok(Self::new(&input.iter().map(|line| Rule::from_str(line)).collect::<Result<Vec<Rule>>>()?))
+        Ok(Self::new(
+            &input
+                .iter()
+                .map(|line| Rule::from_str(line))
+                .collect::<Result<Vec<Rule>>>()?,
+        ))
     }
 
     pub fn new(rules: &Vec<Rule>) -> Self {
         TicketValidator {
-            rules: rules.clone()
+            rules: rules.clone(),
         }
     }
 
@@ -161,13 +178,7 @@ impl TicketValidator {
         let mut acc = Vec::new();
         let mut used: HashSet<&Rule> = HashSet::new();
 
-        if self.recur(
-            0,
-            &self.make_col_map(tickets),
-            tickets,
-            &mut used,
-            &mut acc
-        ) {
+        if self.recur(0, &self.make_col_map(tickets), tickets, &mut used, &mut acc) {
             acc.reverse();
             self.rules = acc;
             return Ok(());
@@ -242,7 +253,7 @@ impl TicketValidator {
         rule_map: &Vec<HashSet<&'a Rule>>,
         tickets: &[Ticket],
         used: &mut HashSet<&'a Rule>,
-        acc: &mut Vec<Rule>
+        acc: &mut Vec<Rule>,
     ) -> bool {
         if index >= rule_map.len() {
             return true;
@@ -278,7 +289,6 @@ impl TicketValidator {
         false
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -372,10 +382,12 @@ mod tests {
 
         #[test]
         fn from_input() {
-            let input = test_input("
+            let input = test_input(
+                "
                 class: 1-3 or 5-7
                 row: 6-11 or 33-44
-                seat: 13-40 or 45-50");
+                seat: 13-40 or 45-50",
+            );
 
             let t = TicketValidator::from_input(&input).unwrap();
 
@@ -390,10 +402,12 @@ mod tests {
 
         #[test]
         fn validate() {
-            let input = test_input("
+            let input = test_input(
+                "
                 class: 1-3 or 5-7
                 row: 6-11 or 33-44
-                seat: 13-40 or 45-50");
+                seat: 13-40 or 45-50",
+            );
 
             let validator = TicketValidator::from_input(&input).unwrap();
 
@@ -415,11 +429,13 @@ mod tests {
 
         #[test]
         fn determine_rule_order() {
-            let input = test_input("
+            let input = test_input(
+                "
                     class: 0-1 or 4-19
                     row: 0-5 or 8-19
                     seat: 0-13 or 16-19
-                ");
+                ",
+            );
 
             let mut validator = TicketValidator::from_input(&input).unwrap();
 
@@ -431,20 +447,25 @@ mod tests {
 
             validator.determine_rule_order(&tickets).unwrap();
 
-            assert_eq!(validator.rules, vec![
-               Rule::from_str("row: 0-5 or 8-19").unwrap(),
-               Rule::from_str("class: 0-1 or 4-19").unwrap(),
-               Rule::from_str("seat: 0-13 or 16-19").unwrap(),
-            ])
+            assert_eq!(
+                validator.rules,
+                vec![
+                    Rule::from_str("row: 0-5 or 8-19").unwrap(),
+                    Rule::from_str("class: 0-1 or 4-19").unwrap(),
+                    Rule::from_str("seat: 0-13 or 16-19").unwrap(),
+                ]
+            )
         }
 
         #[test]
         fn determine_rule_order_fast() {
-            let input = test_input("
+            let input = test_input(
+                "
                     class: 0-1 or 4-19
                     row: 0-5 or 8-19
                     seat: 0-13 or 16-19
-                ");
+                ",
+            );
 
             let mut validator = TicketValidator::from_input(&input).unwrap();
 
@@ -456,11 +477,14 @@ mod tests {
 
             validator.determine_rule_order_fast(&tickets).unwrap();
 
-            assert_eq!(validator.rules, vec![
-               Rule::from_str("row: 0-5 or 8-19").unwrap(),
-               Rule::from_str("class: 0-1 or 4-19").unwrap(),
-               Rule::from_str("seat: 0-13 or 16-19").unwrap(),
-            ])
+            assert_eq!(
+                validator.rules,
+                vec![
+                    Rule::from_str("row: 0-5 or 8-19").unwrap(),
+                    Rule::from_str("class: 0-1 or 4-19").unwrap(),
+                    Rule::from_str("seat: 0-13 or 16-19").unwrap(),
+                ]
+            )
         }
     }
 }

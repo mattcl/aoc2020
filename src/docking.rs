@@ -85,10 +85,7 @@ impl Mask {
         Ok(())
     }
 
-    pub fn apply_address_memoized(
-        &self,
-        addr: usize,
-    ) -> Result<Vec<usize>> {
+    pub fn apply_address_memoized(&self, addr: usize) -> Result<Vec<usize>> {
         let addr = format!("{:036b}", addr).chars().collect::<Vec<char>>();
         let mut cache = HashMap::new();
         Ok(self.recur_memoized(0, &addr, &mut cache))

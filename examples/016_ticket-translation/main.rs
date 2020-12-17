@@ -16,18 +16,15 @@ fn main() {
             .next()
             .expect("invalid input, missing our ticket")
             .get(1)
-            .expect("invalid input, missing our ticket values")
-        ).expect("could not make our ticket");
+            .expect("invalid input, missing our ticket values"),
+    )
+    .expect("could not make our ticket");
 
-    let mut other_tickets = parts
-        .next()
-        .expect("invalid input, no nearby tickets")
-        [1..]
+    let mut other_tickets = parts.next().expect("invalid input, no nearby tickets")[1..]
         .iter()
         .map(|ticket| Ticket::from_str(ticket))
         .collect::<Result<Vec<Ticket>>>()
         .expect("could not make other tickets");
-
 
     let mut sum = 0;
     for ticket in other_tickets.iter_mut() {
@@ -38,13 +35,19 @@ fn main() {
 
     println!("part 1: {}", sum);
 
-    let valid_tickets = other_tickets.into_iter().filter(|ticket| ticket.is_valid).collect::<Vec<Ticket>>();
+    let valid_tickets = other_tickets
+        .into_iter()
+        .filter(|ticket| ticket.is_valid)
+        .collect::<Vec<Ticket>>();
 
     // println!("{:#?}", validator.make_col_map(&valid_tickets).iter().map(|col| col.len()).collect::<Vec<usize>>());
 
-    validator.determine_rule_order_fast(&valid_tickets).expect("could not determine rule order");
+    validator
+        .determine_rule_order_fast(&valid_tickets)
+        .expect("could not determine rule order");
 
-    let res = validator.rules
+    let res = validator
+        .rules
         .iter()
         .enumerate()
         .filter(|(_, r)| r.name.starts_with("departure"))

@@ -10,6 +10,7 @@ pub mod luggage;
 pub mod navigation;
 pub mod passport;
 pub mod password;
+pub mod power;
 pub mod seating;
 pub mod shuttle;
 pub mod ticket;
