@@ -270,7 +270,7 @@ mod tests {
 
         #[test]
         fn from_input() {
-            let res = Adapter::from_input(&input()).unwrap();
+            Adapter::from_input(&input()).unwrap();
         }
 
         #[test]

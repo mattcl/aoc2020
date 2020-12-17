@@ -371,7 +371,6 @@ mod tests {
 
         #[test]
         fn foo() {
-            let input = "7,13,x,x,59,x,31,19";
             for i in 0..1 {
                 println!("-------------------------------------");
                 let left = Slot(i + 4, Bus::new(59));
@@ -425,58 +424,12 @@ mod tests {
             // assert!(false);
         }
 
-        fn calc(first_intersection: usize, intersection: usize, base: usize) -> (usize, usize) {
-            let n = intersection / first_intersection;
-            let remainder = intersection - first_intersection * n;
-            let m = remainder / base;
-
-            (n, m)
-        }
-
         #[derive(Debug)]
         struct Info<'a>(usize, &'a Bus);
 
         impl<'a> fmt::Display for Info<'a> {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
                 write!(f, "({}, {})", self.0, self.1.id())
-            }
-        }
-
-        fn find_intersections(input: &str, one: usize, two: usize) {
-            println!("{}", input);
-            let mut first_intersection = 0;
-            let s = Schedule::from_str(input).unwrap();
-
-            let mut count = 0;
-            for i in 0..40000 {
-                let buses = s
-                    .buses
-                    .iter()
-                    .enumerate()
-                    .filter(|(_, bus)| bus.id() == one || bus.id() == two)
-                    .filter(|(offset, bus)| (i + offset) % bus.id() == 0)
-                    .map(|(offset, bus)| Info(offset, bus))
-                    .collect::<Vec<Info>>();
-
-                if buses.len() > 1 {
-                    if first_intersection == 0 {
-                        first_intersection = i;
-                    }
-                    println!(
-                        "{} - [{} * {}] - {}:{}",
-                        i,
-                        buses[0].1.id(),
-                        i / buses[0].1.id(),
-                        buses[0].0,
-                        buses[1].0,
-                    );
-                    // n * 100 - 2*offset
-                    count += 1;
-
-                    if count > 0 {
-                        break;
-                    }
-                }
             }
         }
     }

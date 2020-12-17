@@ -315,7 +315,6 @@ mod tests {
         #[test]
         fn new() {
             let input = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X";
-            let m = Mask::new(input);
             assert!(Mask::new(input).is_ok());
 
             let m = Mask::new(input).unwrap();

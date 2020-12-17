@@ -1,6 +1,6 @@
 use aoc::game::Game;
 use aoc::util::load_input;
-use criterion::{black_box, criterion_group, BenchmarkId, Criterion};
+use criterion::{criterion_group, BenchmarkId, Criterion};
 use std::str::FromStr;
 
 pub fn bench(c: &mut Criterion) {

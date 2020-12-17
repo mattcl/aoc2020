@@ -1,5 +1,5 @@
 use crate::error::{AocError, Result};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::str::FromStr;
 
 #[derive(Debug, Eq, PartialEq, Clone, Hash)]

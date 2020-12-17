@@ -1,6 +1,6 @@
 use aoc::console::Program;
 use aoc::util::load_input;
-use criterion::{black_box, criterion_group, BenchmarkId, Criterion};
+use criterion::{criterion_group, BenchmarkId, Criterion};
 
 pub fn bench(c: &mut Criterion) {
     let mut group = c.benchmark_group("008 handheld halting part 2");

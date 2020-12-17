@@ -144,8 +144,6 @@ impl Area {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-
     mod loc {
         use super::super::*;
 

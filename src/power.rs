@@ -1,8 +1,7 @@
 use std::clone::Clone;
 use std::cmp::Eq;
 use std::hash::Hash;
-
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 pub trait Addressable {
     type Item;
