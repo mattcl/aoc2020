@@ -9,4 +9,7 @@ fn main() {
 
     let program = Initializer::initialize_v2(&lines).expect("could not initialize");
     println!("part 2: {}", program.memory_sum());
+
+    let program = Initializer::initialize_v2_memoized(&lines).expect("could not initialize");
+    println!("part 2: {}", program.memory_sum());
 }

@@ -101,14 +101,13 @@ impl Mask {
             return vec![0];
         }
 
-        // cur string + append char
         let mut addrs = Vec::new();
 
         if let Some(vals) = cache.get(&index) {
             return vals.clone();
         } else {
             let base: usize = 2;
-            let val = base.pow((36 - index) as u32);
+            let val = base.pow((35 - index) as u32);
             match self.raw[index] {
                 '1' => {
                     self.recur_memoized(index + 1, addr, cache)
@@ -127,7 +126,8 @@ impl Mask {
                 '0' => {
                     self.recur_memoized(index + 1, addr, cache)
                         .iter()
-                        .for_each(|a| addrs.push(*a));
+                        .map(|a| if addr[index] == '1' {val + *a} else {*a})
+                        .for_each(|a| addrs.push(a));
                 }
                 _ => unreachable!(),
             }
