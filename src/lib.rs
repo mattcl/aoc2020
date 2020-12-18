@@ -1,5 +1,6 @@
 pub mod adapter;
 pub mod boarding;
+pub mod calculator;
 pub mod console;
 pub mod customs;
 pub mod docking;
