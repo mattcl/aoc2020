@@ -1,4 +1,4 @@
-use aoc::calculator::{AdvancedParser, Parser};
+use aoc::calculator::{StrParser, AdvancedParser, Parser};
 use aoc::util::load_input;
 
 fn main() {
