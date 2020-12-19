@@ -8,6 +8,7 @@ pub mod error;
 pub mod expense;
 pub mod game;
 pub mod luggage;
+pub mod message;
 pub mod navigation;
 pub mod passport;
 pub mod password;
