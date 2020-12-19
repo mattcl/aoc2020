@@ -17,19 +17,27 @@ pub fn load_input(day: &str) -> Result<Vec<String>> {
     //
     // examples/003_toboggan-trajectory/input
     //
+    load_named_input(day, "input")
+}
+
+pub fn load_named_input(day: &str, name: &str) -> Result<Vec<String>> {
+    //
+    // examples/003_toboggan-trajectory/<name>
+    //
     let examples_dir = Path::new("examples");
     for entry in fs::read_dir(examples_dir)? {
         let entry = entry?;
         let path = entry.path();
         if path.is_dir() && entry.file_name().into_string()?.starts_with(day) {
-            if let Some(file) = path.join("input").to_str() {
+            if let Some(file) = path.join(name).to_str() {
                 return load_lines(file);
             }
         }
     }
     Err(AocError::InputError(format!(
-        "Could not find or load input for {}",
-        day
+        "Could not find or load input for {}: '{}'",
+        day,
+        name
     )))
 }
 

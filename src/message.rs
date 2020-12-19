@@ -29,6 +29,20 @@ pub fn get_matching_messages(input: &[String]) -> Result<HashSet<String>> {
     Err(AocError::InvalidInput("Input missing rules".to_string()))
 }
 
+pub fn get_matching_messages_b(input: &[String]) -> Result<HashSet<String>> {
+    let mut parts = input.split(|line| line.is_empty());
+    if let Some(rules) = parts.next() {
+        let map = input_map(rules)?;
+        let ruleset = Ruleset::from_input_map(&map)?;
+        if let Some(messages) = parts.next() {
+            return Ok(messages.iter().cloned().filter(|line| ruleset.check_b(0, line)).collect::<HashSet<String>>());
+        }
+        return Err(AocError::InvalidInput("Input missing messages".to_string()))
+    }
+
+    Err(AocError::InvalidInput("Input missing rules".to_string()))
+}
+
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Token {
@@ -61,6 +75,30 @@ impl Token {
 
         false
     }
+
+    pub fn check_b(&self, start: &HashSet<usize>, input: &[char], rules: &HashMap<usize, Rule>) -> HashSet<usize> {
+        match self {
+            Self::Val(ch) => {
+                start
+                    .iter()
+                    .filter(|i| {
+                        match input.get(**i) {
+                            Some(c) => *ch == *c,
+                            _ => false
+                        }
+                    })
+                    .map(|i| i + 1)
+                    .collect::<HashSet<usize>>()
+            },
+            Self::Rule(rule_id) => {
+                if let Some(rule) = rules.get(rule_id) {
+                    rule.check_b(start, input, rules)
+                } else {
+                    HashSet::new()
+                }
+            },
+        }
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -80,6 +118,22 @@ impl Group {
             }
         }
         true
+    }
+
+    pub fn check_b(&self, start: &HashSet<usize>, input: &[char], rules: &HashMap<usize, Rule>) -> HashSet<usize> {
+        let mut start = start.clone();
+        for (index, token) in self.0.iter().enumerate() {
+            let cur = token.check_b(&start, input, rules);
+            if cur.is_empty() {
+                return cur;
+            }
+
+            if index == self.0.len() - 1 {
+                return cur;
+            }
+            start = cur;
+        }
+        HashSet::new()
     }
 }
 
@@ -126,6 +180,12 @@ impl Rule {
         }
         false
     }
+
+    pub fn check_b(&self, start: &HashSet<usize>, input: &[char], rules: &HashMap<usize, Rule>) -> HashSet<usize> {
+        self.groups
+            .iter()
+            .fold(HashSet::new(), |acc, group| acc.union(&group.check_b(start, input, rules)).cloned().collect())
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -158,6 +218,15 @@ impl Ruleset {
         }
         false
     }
+
+    pub fn check_b(&self, id: usize, input: &str) -> bool {
+        if let Some(rule) = self.get(id) {
+            let input = input.chars().collect::<Vec<char>>();
+            let endpoints = rule.check_b(&vec![0].into_iter().collect::<HashSet<usize>>(), &input, &self.rules);
+            return endpoints.contains(&input.len());
+        }
+        false
+    }
 }
 
 #[cfg(test)]
@@ -181,6 +250,12 @@ mod tests {
         assert!(!ruleset.check(0, "xxx"));
         assert!(!ruleset.check(0, "aa"));
         assert!(!ruleset.check(0, "ab"));
+
+        assert!(ruleset.check_b(0, "aab"));
+        assert!(ruleset.check_b(0, "aba"));
+        assert!(!ruleset.check_b(0, "xxx"));
+        assert!(!ruleset.check_b(0, "aa"));
+        assert!(!ruleset.check_b(0, "ab"));
     }
 
     #[test]
@@ -331,7 +406,7 @@ mod tests {
             "aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba",
         ].iter().map(|s| s.to_string()).collect::<HashSet<String>>();
 
-        let matching = get_matching_messages(&input).unwrap();
+        let matching = get_matching_messages_b(&input).unwrap();
         println!("{:#?}", expected.difference(&matching));
         println!("{:#?}", matching);
 
@@ -347,23 +422,39 @@ mod tests {
             aab
             aaab
             aaaab
+            baaaa
         ");
 
-        let matching = get_matching_messages(&input).unwrap();
+        let matching = get_matching_messages_b(&input).unwrap();
         println!("{:#?}", matching);
 
         assert_eq!(matching.len(), 4);
 
+        // 11: 42 31 | 42 11 31
         let mut input = test_input("
-            0: \"a\" 0 | \"b\"
+            0: \"b\" \"a\" | \"b\" 0 \"a\"
 
-            ab
-            aab
-            aaab
-            aaaab
+            ba
+            bbaa
+            bbbbaaaa
         ");
 
-        let matching = get_matching_messages(&input).unwrap();
+        let matching = get_matching_messages_b(&input).unwrap();
+        println!("{:#?}", matching);
+
+        assert_eq!(matching.len(), 3);
+
+        let mut input = test_input("
+            0: \"a\" | \"a\" 0
+
+            a
+            aa
+            aaa
+            aaaa
+            abaaa
+        ");
+
+        let matching = get_matching_messages_b(&input).unwrap();
         println!("{:#?}", matching);
 
         assert_eq!(matching.len(), 4);
