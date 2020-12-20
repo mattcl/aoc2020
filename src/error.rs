@@ -42,6 +42,9 @@ pub enum AocError {
     /// Ticket rules
     NoValidRuleOrder,
 
+    /// tiles
+    ArrangementNotFound,
+
     /// Represents all other cases of
     IOError(std::io::Error),
 
@@ -79,6 +82,7 @@ impl std::error::Error for AocError {
             AocError::SeatDoesNotExist(_) => None,
             AocError::GameError(_) => None,
             AocError::NoValidRuleOrder => None,
+            AocError::ArrangementNotFound => None,
         }
     }
 }
@@ -120,6 +124,7 @@ impl std::fmt::Display for AocError {
             AocError::SeatDoesNotExist(ref pos) => write!(f, "Seast does not exist: '{:?}'", pos),
             AocError::GameError(ref msg) => write!(f, "Memory game error: '{}'", msg),
             AocError::NoValidRuleOrder => write!(f, "No rule order could be determined"),
+            AocError::ArrangementNotFound => write!(f, "Arrangement has not been found yet"),
         }
     }
 }

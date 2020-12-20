@@ -126,7 +126,7 @@ impl Mask {
                 '0' => {
                     self.recur_memoized(index + 1, addr, cache)
                         .iter()
-                        .map(|a| if addr[index] == '1' {val + *a} else {*a})
+                        .map(|a| if addr[index] == '1' { val + *a } else { *a })
                         .for_each(|a| addrs.push(a));
                 }
                 _ => unreachable!(),

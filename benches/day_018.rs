@@ -1,4 +1,4 @@
-use aoc::calculator::{StrParser, AdvancedParser, Parser};
+use aoc::calculator::{AdvancedParser, Parser, StrParser};
 use aoc::util::load_input;
 use criterion::{criterion_group, BenchmarkId, Criterion};
 

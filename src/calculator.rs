@@ -1,9 +1,8 @@
 #[derive(Debug, Eq, PartialEq)]
 pub enum Token {
     Op(Op),
-    Val(i64)
+    Val(i64),
 }
-
 
 #[derive(Debug, Eq, PartialEq)]
 pub enum Op {
@@ -20,7 +19,7 @@ fn extract_number(initial: &char, index: &mut usize, chars: &[char]) -> i64 {
                 '0'..='9' => {
                     val = val * 10 + ch.to_digit(10).unwrap();
                     *index += 1;
-                },
+                }
                 _ => break,
             }
         } else {
@@ -38,7 +37,6 @@ pub trait StrParser {
         let mut index = 0;
         let chars = raw.chars().collect::<Vec<char>>();
         self.recur(&mut index, &chars)
-
     }
 
     fn recur(&self, index: &mut usize, chars: &[char]) -> i64 {
@@ -50,17 +48,17 @@ pub trait StrParser {
                     '0'..='9' => {
                         let val = extract_number(ch, index, chars);
                         tokens.push(Token::Val(val));
-                    },
+                    }
                     '+' => tokens.push(Token::Op(Op::Add)),
                     '*' => tokens.push(Token::Op(Op::Multiply)),
                     '(' => {
                         *index += 1;
                         let val = self.recur(index, chars);
                         tokens.push(Token::Val(val));
-                    },
+                    }
                     ')' => break,
-                    ' ' => {},
-                    _ => unreachable!()
+                    ' ' => {}
+                    _ => unreachable!(),
                 }
             } else {
                 break;
@@ -85,19 +83,15 @@ impl StrParser for Parser {
         loop {
             if let Some(token) = tokens.get(index) {
                 match token {
-                    Token::Val(val) => {
-                        match op {
-                            Some(Op::Add) => result += val,
-                            Some(Op::Multiply) => result *= val,
-                            None => result = *val,
-                        }
-                    }
-                    Token::Op(o) => {
-                        match o {
-                            Op::Add => op = Some(Op::Add),
-                            Op::Multiply => op = Some(Op::Multiply),
-                        }
-                    }
+                    Token::Val(val) => match op {
+                        Some(Op::Add) => result += val,
+                        Some(Op::Multiply) => result *= val,
+                        None => result = *val,
+                    },
+                    Token::Op(o) => match o {
+                        Op::Add => op = Some(Op::Add),
+                        Op::Multiply => op = Some(Op::Multiply),
+                    },
                 }
             } else {
                 break;
@@ -126,11 +120,11 @@ impl AdvancedParser {
                             Some(Token::Val(val)) => {
                                 *index += 1;
                                 sum += val;
-                            },
-                            _ => {},
+                            }
+                            _ => {}
                         }
-                    },
-                    _ => break
+                    }
+                    _ => break,
                 }
             } else {
                 break;
@@ -150,19 +144,15 @@ impl StrParser for AdvancedParser {
         loop {
             if let Some(token) = tokens.get(index) {
                 match token {
-                    Token::Val(val) => {
-                        match op {
-                            Some(Op::Add) => result += val,
-                            Some(Op::Multiply) => result *= self.sum(*val, &mut index, tokens),
-                            None => result = *val,
-                        }
-                    }
-                    Token::Op(o) => {
-                        match o {
-                            Op::Add => op = Some(Op::Add),
-                            Op::Multiply => op = Some(Op::Multiply),
-                        }
-                    }
+                    Token::Val(val) => match op {
+                        Some(Op::Add) => result += val,
+                        Some(Op::Multiply) => result *= self.sum(*val, &mut index, tokens),
+                        None => result = *val,
+                    },
+                    Token::Op(o) => match o {
+                        Op::Add => op = Some(Op::Add),
+                        Op::Multiply => op = Some(Op::Multiply),
+                    },
                 }
             } else {
                 break;
@@ -196,7 +186,6 @@ mod tests {
         assert_eq!(index, 2);
     }
 
-
     mod parser {
         use super::*;
 
@@ -206,7 +195,10 @@ mod tests {
 
             assert_eq!(p.eval("2 * 33 + (4 * 5)"), 86);
             assert_eq!(p.eval("2 * 3 + (4 * 5)"), 26);
-            assert_eq!(p.eval("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2"), 13632);
+            assert_eq!(
+                p.eval("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2"),
+                13632
+            );
         }
     }
 

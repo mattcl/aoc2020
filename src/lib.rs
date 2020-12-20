@@ -7,6 +7,7 @@ pub mod docking;
 pub mod error;
 pub mod expense;
 pub mod game;
+pub mod jigsaw;
 pub mod luggage;
 pub mod message;
 pub mod navigation;

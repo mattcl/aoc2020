@@ -36,8 +36,7 @@ pub fn load_named_input(day: &str, name: &str) -> Result<Vec<String>> {
     }
     Err(AocError::InputError(format!(
         "Could not find or load input for {}: '{}'",
-        day,
-        name
+        day, name
     )))
 }
 
