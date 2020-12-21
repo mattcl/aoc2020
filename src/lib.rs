@@ -6,6 +6,7 @@ pub mod customs;
 pub mod docking;
 pub mod error;
 pub mod expense;
+pub mod food;
 pub mod game;
 pub mod jigsaw;
 pub mod luggage;
