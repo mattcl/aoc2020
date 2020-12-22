@@ -54,3 +54,7 @@ path = "examples/015_rambunctious-recitation/profile/part_one.rs"
 [[example]]
 name = "015_profile_part2"
 path = "examples/015_rambunctious-recitation/profile/part_two.rs"
+
+[[example]]
+name = "022_profile_part2"
+path = "examples/022_crab-combat/profile/recursive.rs"
