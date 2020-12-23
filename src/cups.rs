@@ -1,6 +1,4 @@
 use crate::error::{AocError, Result};
-use std::collections::HashMap;
-use std::iter::FromIterator;
 use std::str::FromStr;
 use std::fmt;
 
@@ -193,7 +191,7 @@ impl NodeList {
     }
 
     pub fn cups(&self, start: usize, end: usize) -> Vec<Cup> {
-        let mut v = Vec::new();
+        let mut v = Vec::with_capacity(3);
 
         let mut cur = self.nodes[start].clone();
         v.push(cur.val);
