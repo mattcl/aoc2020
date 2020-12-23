@@ -3,6 +3,7 @@ pub mod boarding;
 pub mod calculator;
 pub mod combat;
 pub mod console;
+pub mod cups;
 pub mod customs;
 pub mod docking;
 pub mod error;
