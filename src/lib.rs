@@ -11,6 +11,7 @@ pub mod expense;
 pub mod food;
 pub mod game;
 pub mod jigsaw;
+pub mod lobby;
 pub mod luggage;
 pub mod message;
 pub mod navigation;

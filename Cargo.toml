@@ -62,3 +62,7 @@ path = "examples/022_crab-combat/profile/recursive.rs"
 [[example]]
 name = "023_profile_part2"
 path = "examples/023_crab-cups/profile/part2.rs"
+
+[[example]]
+name = "024_profile_part2"
+path = "examples/024_lobby-layout/profile/part2.rs"
