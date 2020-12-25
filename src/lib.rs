@@ -7,6 +7,7 @@ pub mod cups;
 pub mod customs;
 pub mod docking;
 pub mod error;
+pub mod encryption;
 pub mod expense;
 pub mod food;
 pub mod game;
