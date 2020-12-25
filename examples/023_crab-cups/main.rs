@@ -1,5 +1,4 @@
 use aoc::cups::Game;
-use aoc::util::load_input;
 use std::str::FromStr;
 
 

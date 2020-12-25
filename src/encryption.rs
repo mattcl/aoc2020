@@ -59,7 +59,6 @@ impl Device {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::util::test_input;
 
     mod key {
         use super::*;
@@ -70,6 +69,7 @@ mod tests {
             assert_eq!(Key::new(11, 7), Key(17807724));
         }
 
+        #[test]
         fn derriving_loop_size() {
             assert_eq!(Key(5764801).loop_size(7), 8);
             assert_eq!(Key(17807724).loop_size(7), 11);

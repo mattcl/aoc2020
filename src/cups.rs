@@ -282,7 +282,6 @@ impl fmt::Display for NodeList {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::util::test_input;
 
     mod node_list {
         use super::*;
@@ -312,7 +311,7 @@ mod tests {
 
         #[test]
         fn cups() {
-            let mut nl = NodeList::new(vec![Cup(1), Cup(3), Cup(5), Cup(8), Cup(6), Cup(2)], 12);
+            let nl = NodeList::new(vec![Cup(1), Cup(3), Cup(5), Cup(8), Cup(6), Cup(2)], 12);
             assert_eq!(nl.cups(2, 4), vec![Cup(5), Cup(8), Cup(6)]);
         }
 
