@@ -11,21 +11,16 @@ pub fn bench(c: &mut Criterion) {
         .expect("could not parse input");
 
     let mut group = c.benchmark_group("025 combo breaker");
-    group.bench_function(
-        BenchmarkId::new("finding encryption key", "normal"),
-        |b| {
-            b.iter(|| {
-                let mut values = values
-                    .iter()
-                    .map(|v| Device::from_key(Key(*v), 7));
+    group.bench_function(BenchmarkId::new("finding encryption key", "normal"), |b| {
+        b.iter(|| {
+            let mut values = values.iter().map(|v| Device::from_key(Key(*v), 7));
 
-                let device1 = values.next().expect("missing device 1");
-                let device2 = values.next().expect("missing device 2");
+            let device1 = values.next().expect("missing device 1");
+            let device2 = values.next().expect("missing device 2");
 
-                let _ = device1.encryption_key(&device2.public_key);
-            })
-        },
-    );
+            let _ = device1.encryption_key(&device2.public_key);
+        })
+    });
     group.finish();
 }
 

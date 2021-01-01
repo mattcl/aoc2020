@@ -20,9 +20,13 @@ fn main() {
         .map(|(ingredient, allergen)| (ingredient.clone(), allergen.clone().unwrap()))
         .collect::<Vec<(Ingredient, Allergen)>>();
 
-    mapping.sort_by(|a, b| a.1.0.cmp(&b.1.0));
+    mapping.sort_by(|a, b| a.1 .0.cmp(&b.1 .0));
 
-    let res = mapping.iter().map(|(i, _)| i.0.as_ref()).collect::<Vec<&str>>().join(",");
+    let res = mapping
+        .iter()
+        .map(|(i, _)| i.0.as_ref())
+        .collect::<Vec<&str>>()
+        .join(",");
 
     println!("part 2: {}", res);
 }

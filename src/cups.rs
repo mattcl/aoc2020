@@ -1,6 +1,6 @@
 use crate::error::{AocError, Result};
-use std::str::FromStr;
 use std::fmt;
+use std::str::FromStr;
 
 #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Cup(usize);
@@ -18,10 +18,13 @@ impl Game {
     }
 
     pub fn from_str_with_len(s: &str, desired_len: usize) -> Result<Self> {
-        let cups = s.chars()
+        let cups = s
+            .chars()
             .map(|ch| {
                 ch.to_digit(10)
-                    .ok_or_else(|| AocError::InvalidInput("could not convert character to int".to_string()))
+                    .ok_or_else(|| {
+                        AocError::InvalidInput("could not convert character to int".to_string())
+                    })
                     .and_then(|v| Ok(Cup(v as usize)))
             })
             .collect::<Result<Vec<Cup>>>()?;
@@ -53,7 +56,11 @@ impl Game {
     }
 
     pub fn order_string(&self) -> String {
-        self.order().iter().map(|c| c.0.to_string()).collect::<Vec<String>>().join("")
+        self.order()
+            .iter()
+            .map(|c| c.0.to_string())
+            .collect::<Vec<String>>()
+            .join("")
     }
 
     pub fn crappy_checksum(&self) -> u128 {
@@ -72,10 +79,13 @@ impl FromStr for Game {
     type Err = AocError;
 
     fn from_str(s: &str) -> Result<Self> {
-        let cups = s.chars()
+        let cups = s
+            .chars()
             .map(|ch| {
                 ch.to_digit(10)
-                    .ok_or_else(|| AocError::InvalidInput("could not convert character to int".to_string()))
+                    .ok_or_else(|| {
+                        AocError::InvalidInput("could not convert character to int".to_string())
+                    })
                     .and_then(|v| Ok(Cup(v as usize)))
             })
             .collect::<Result<Vec<Cup>>>()?;
@@ -93,21 +103,17 @@ pub struct Node {
 
 impl Node {
     pub fn new(prev: usize, next: usize, val: Cup) -> Self {
-        Node {
-            prev,
-            next,
-            val
-        }
+        Node { prev, next, val }
     }
 }
 
 #[derive(Debug, Clone)]
 pub struct NodeList {
-   nodes: Vec<Node>,
-   cup_map: Vec<usize>,
-   current: usize,
-   min: Cup,
-   max: Cup,
+    nodes: Vec<Node>,
+    cup_map: Vec<usize>,
+    current: usize,
+    min: Cup,
+    max: Cup,
 }
 
 impl NodeList {
@@ -123,11 +129,7 @@ impl NodeList {
         nl.cup_map = vec![10_000_000; desired_len + max.0];
 
         for (i, cup) in cups.into_iter().enumerate() {
-            let prev = if i == 0 {
-                desired_len - 1
-            } else {
-                i - 1
-            };
+            let prev = if i == 0 { desired_len - 1 } else { i - 1 };
             nl.nodes.push(Node::new(prev, i + 1, cup.clone()));
             nl.cup_map[cup.0 - 1] = i;
         }
@@ -145,13 +147,13 @@ impl NodeList {
                     existing_len + i + 1
                 };
                 let cup = Cup(max.0 + 1 + i);
-                nl.nodes.push(Node::new(existing_len + i - 1, next, cup.clone()));
+                nl.nodes
+                    .push(Node::new(existing_len + i - 1, next, cup.clone()));
                 nl.cup_map[cup.0 - 1] = existing_len + i;
             }
 
             nl.max = nl.nodes[nl.nodes[0].prev].val.clone();
         }
-
 
         nl
     }
@@ -239,7 +241,6 @@ impl NodeList {
         }
 
         (next, last)
-
     }
 
     pub fn take(&mut self, n: usize) -> (usize, usize) {
@@ -269,7 +270,8 @@ impl NodeList {
 
 impl fmt::Display for NodeList {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let formatted: Vec<String> = self.nodes
+        let formatted: Vec<String> = self
+            .nodes
             .iter()
             .enumerate()
             .map(|(i, n)| format!("({} | {} | {}, {})", n.val.0, i, n.prev, n.next))
@@ -295,7 +297,6 @@ mod tests {
             assert_eq!(nl.nodes.len(), 6);
             assert_eq!(nl.nodes[5].next, 0);
         }
-
 
         #[test]
         fn take() {
@@ -334,8 +335,19 @@ mod tests {
         fn round() {
             let mut g = Game::from_str("389125467").unwrap();
             let res = g.order();
-            assert_eq!(res, vec![Cup(2), Cup(5), Cup(4), Cup(6), Cup(7), Cup(3), Cup(8), Cup(9)]);
-
+            assert_eq!(
+                res,
+                vec![
+                    Cup(2),
+                    Cup(5),
+                    Cup(4),
+                    Cup(6),
+                    Cup(7),
+                    Cup(3),
+                    Cup(8),
+                    Cup(9)
+                ]
+            );
 
             //-- move 1 --
             //cups: (3) 8  9  1  2  5  4  6  7
@@ -344,7 +356,19 @@ mod tests {
 
             g.round();
             let res = g.order();
-            assert_eq!(res, vec![Cup(5), Cup(4), Cup(6), Cup(7), Cup(3), Cup(2), Cup(8), Cup(9)]);
+            assert_eq!(
+                res,
+                vec![
+                    Cup(5),
+                    Cup(4),
+                    Cup(6),
+                    Cup(7),
+                    Cup(3),
+                    Cup(2),
+                    Cup(8),
+                    Cup(9)
+                ]
+            );
 
             //-- move 2 --
             //cups:  3 (2) 8  9  1  5  4  6  7
@@ -353,7 +377,19 @@ mod tests {
 
             g.round();
             let res = g.order();
-            assert_eq!(res, vec![Cup(3), Cup(2), Cup(5), Cup(4), Cup(6), Cup(7), Cup(8), Cup(9)]);
+            assert_eq!(
+                res,
+                vec![
+                    Cup(3),
+                    Cup(2),
+                    Cup(5),
+                    Cup(4),
+                    Cup(6),
+                    Cup(7),
+                    Cup(8),
+                    Cup(9)
+                ]
+            );
             //-- move 3 --
             //cups:  3  2 (5) 4  6  7  8  9  1
             //pick up: 4, 6, 7
@@ -361,7 +397,19 @@ mod tests {
 
             g.round();
             let res = g.order();
-            assert_eq!(res, vec![Cup(3), Cup(4), Cup(6), Cup(7), Cup(2), Cup(5), Cup(8), Cup(9)]);
+            assert_eq!(
+                res,
+                vec![
+                    Cup(3),
+                    Cup(4),
+                    Cup(6),
+                    Cup(7),
+                    Cup(2),
+                    Cup(5),
+                    Cup(8),
+                    Cup(9)
+                ]
+            );
             //-- move 4 --
             //cups:  7  2  5 (8) 9  1  3  4  6
             //pick up: 9, 1, 3
@@ -369,7 +417,19 @@ mod tests {
 
             g.round();
             let res = g.order();
-            assert_eq!(res, vec![Cup(3), Cup(2), Cup(5), Cup(8), Cup(4), Cup(6), Cup(7), Cup(9)]);
+            assert_eq!(
+                res,
+                vec![
+                    Cup(3),
+                    Cup(2),
+                    Cup(5),
+                    Cup(8),
+                    Cup(4),
+                    Cup(6),
+                    Cup(7),
+                    Cup(9)
+                ]
+            );
             //-- move 5 --
             //cups:  3  2  5  8 (4) 6  7  9  1
             //pick up: 6, 7, 9
@@ -378,7 +438,19 @@ mod tests {
             g.round();
             let res = g.order();
             println!("{}", g.cups);
-            assert_eq!(res, vec![Cup(3), Cup(6), Cup(7), Cup(9), Cup(2), Cup(5), Cup(8), Cup(4)]);
+            assert_eq!(
+                res,
+                vec![
+                    Cup(3),
+                    Cup(6),
+                    Cup(7),
+                    Cup(9),
+                    Cup(2),
+                    Cup(5),
+                    Cup(8),
+                    Cup(4)
+                ]
+            );
             //-- move 6 --
             //cups:  9  2  5  8  4 (1) 3  6  7
             //pick up: 3, 6, 7
@@ -387,7 +459,19 @@ mod tests {
             g.round();
             let res = g.order();
             println!("{}", g.cups);
-            assert_eq!(res, vec![Cup(9), Cup(3), Cup(6), Cup(7), Cup(2), Cup(5), Cup(8), Cup(4)]);
+            assert_eq!(
+                res,
+                vec![
+                    Cup(9),
+                    Cup(3),
+                    Cup(6),
+                    Cup(7),
+                    Cup(2),
+                    Cup(5),
+                    Cup(8),
+                    Cup(4)
+                ]
+            );
             //-- move 7 --
             //cups:  7  2  5  8  4  1 (9) 3  6
             //pick up: 3, 6, 7
@@ -395,7 +479,19 @@ mod tests {
 
             g.round();
             let res = g.order();
-            assert_eq!(res, vec![Cup(9), Cup(2), Cup(5), Cup(8), Cup(3), Cup(6), Cup(7), Cup(4)]);
+            assert_eq!(
+                res,
+                vec![
+                    Cup(9),
+                    Cup(2),
+                    Cup(5),
+                    Cup(8),
+                    Cup(3),
+                    Cup(6),
+                    Cup(7),
+                    Cup(4)
+                ]
+            );
             //-- move 8 --
             //cups:  8  3  6  7  4  1  9 (2) 5
             //pick up: 5, 8, 3
@@ -403,7 +499,19 @@ mod tests {
             //
             g.round();
             let res = g.order();
-            assert_eq!(res, vec![Cup(5), Cup(8), Cup(3), Cup(9), Cup(2), Cup(6), Cup(7), Cup(4)]);
+            assert_eq!(
+                res,
+                vec![
+                    Cup(5),
+                    Cup(8),
+                    Cup(3),
+                    Cup(9),
+                    Cup(2),
+                    Cup(6),
+                    Cup(7),
+                    Cup(4)
+                ]
+            );
             //-- move 9 --
             //cups:  7  4  1  5  8  3  9  2 (6)
             //pick up: 7, 4, 1
@@ -411,7 +519,19 @@ mod tests {
 
             g.round();
             let res = g.order();
-            assert_eq!(res, vec![Cup(8), Cup(3), Cup(9), Cup(2), Cup(6), Cup(5), Cup(7), Cup(4)]);
+            assert_eq!(
+                res,
+                vec![
+                    Cup(8),
+                    Cup(3),
+                    Cup(9),
+                    Cup(2),
+                    Cup(6),
+                    Cup(5),
+                    Cup(7),
+                    Cup(4)
+                ]
+            );
             //-- move 10 --
             //cups: (5) 7  4  1  8  3  9  2  6
             //pick up: 7, 4, 1
@@ -426,16 +546,19 @@ mod tests {
             let g = Game::from_str("389125467").unwrap();
             let res = g.order();
 
-            assert_eq!(res, vec![
-                Cup(2),
-                Cup(5),
-                Cup(4),
-                Cup(6),
-                Cup(7),
-                Cup(3),
-                Cup(8),
-                Cup(9),
-            ]);
+            assert_eq!(
+                res,
+                vec![
+                    Cup(2),
+                    Cup(5),
+                    Cup(4),
+                    Cup(6),
+                    Cup(7),
+                    Cup(3),
+                    Cup(8),
+                    Cup(9),
+                ]
+            );
         }
         //92658374. If the crab were to complete all 100 moves, the order after cup 1 would be 67384529.
         #[test]
@@ -460,4 +583,3 @@ mod tests {
         // }
     }
 }
-

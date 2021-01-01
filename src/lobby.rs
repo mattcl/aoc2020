@@ -6,7 +6,10 @@ pub struct Address(Vec<Dir>);
 
 impl Address {
     pub fn from_input(input: &[String]) -> Result<Vec<Address>> {
-        input.iter().map(|line| Dir::parse_instructions(line)).collect::<Result<Vec<Address>>>()
+        input
+            .iter()
+            .map(|line| Dir::parse_instructions(line))
+            .collect::<Result<Vec<Address>>>()
     }
 }
 
@@ -17,7 +20,7 @@ pub enum Dir {
     SouthWest,
     West,
     NorthWest,
-    NorthEast
+    NorthEast,
 }
 
 impl Dir {
@@ -33,20 +36,24 @@ impl Dir {
                     's' if Some(&'e') == chars.peek() => {
                         chars.next();
                         res.push(Dir::SouthEast);
-                    },
+                    }
                     's' if Some(&'w') == chars.peek() => {
                         chars.next();
                         res.push(Dir::SouthWest);
-                    },
+                    }
                     'n' if Some(&'e') == chars.peek() => {
                         chars.next();
                         res.push(Dir::NorthEast);
-                    },
+                    }
                     'n' if Some(&'w') == chars.peek() => {
                         chars.next();
                         res.push(Dir::NorthWest);
-                    },
-                    _ => return Err(AocError::InvalidInput("cannot parse instructions".to_string()))
+                    }
+                    _ => {
+                        return Err(AocError::InvalidInput(
+                            "cannot parse instructions".to_string(),
+                        ))
+                    }
                 }
             } else {
                 break;
@@ -109,7 +116,8 @@ pub struct Lobby {
 impl Lobby {
     pub fn new() -> Self {
         let mut l = Lobby::default();
-        l.tiles.insert(Coordinate(0, 0), Tile::new(Coordinate(0, 0)));
+        l.tiles
+            .insert(Coordinate(0, 0), Tile::new(Coordinate(0, 0)));
         l
     }
 
@@ -121,7 +129,7 @@ impl Lobby {
             if let Some(dir) = dirs.next() {
                 cur = cur.shift(dir);
             } else {
-                break
+                break;
             }
         }
 
@@ -133,8 +141,16 @@ impl Lobby {
     }
 
     pub fn candidates(&self) -> HashMap<Coordinate, usize> {
-        let dirs = vec![Dir::East, Dir::West, Dir::SouthEast, Dir::SouthWest, Dir::NorthEast, Dir::NorthWest];
-        let mut candidates: HashMap<Coordinate, usize> = HashMap::with_capacity(self.tiles.len() * 7);
+        let dirs = vec![
+            Dir::East,
+            Dir::West,
+            Dir::SouthEast,
+            Dir::SouthWest,
+            Dir::NorthEast,
+            Dir::NorthWest,
+        ];
+        let mut candidates: HashMap<Coordinate, usize> =
+            HashMap::with_capacity(self.tiles.len() * 7);
 
         self.tiles.iter().for_each(|(c, t)| {
             candidates.entry(c.to_owned()).or_insert(0);
@@ -166,7 +182,10 @@ impl Lobby {
                 }
                 _ => {
                     if count == 2 {
-                        self.tiles.entry(candidate).or_insert(Tile::new(candidate)).flip();
+                        self.tiles
+                            .entry(candidate)
+                            .or_insert(Tile::new(candidate))
+                            .flip();
                     } else {
                         self.tiles.remove(&candidate);
                     }
@@ -175,7 +194,6 @@ impl Lobby {
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -192,7 +210,13 @@ mod tests {
             assert_eq!(res, expected);
 
             let res = Dir::parse_instructions("nwwswee").unwrap();
-            let expected = Address(vec![Dir::NorthWest, Dir::West, Dir::SouthWest, Dir::East, Dir::East]);
+            let expected = Address(vec![
+                Dir::NorthWest,
+                Dir::West,
+                Dir::SouthWest,
+                Dir::East,
+                Dir::East,
+            ]);
             assert_eq!(res, expected);
 
             assert!(Dir::parse_instructions("nwwsween").is_err());
@@ -233,7 +257,8 @@ mod tests {
         use super::*;
 
         fn input() -> Vec<String> {
-            test_input("
+            test_input(
+                "
                 sesenwnenenewseeswwswswwnenewsewsw
                 neeenesenwnwwswnenewnwwsewnenwseswesw
                 seswneswswsenwwnwse
@@ -254,7 +279,8 @@ mod tests {
                 eneswnwswnwsenenwnwnwwseeswneewsenese
                 neswnwewnwnwseenwseesewsenwsweewe
                 wseweeenwnesenwwwswnew
-            ")
+            ",
+            )
         }
 
         #[test]

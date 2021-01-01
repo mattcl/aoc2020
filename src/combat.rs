@@ -3,7 +3,6 @@ use std::collections::{HashMap, HashSet, VecDeque};
 use std::iter::FromIterator;
 use std::str::FromStr;
 
-
 #[derive(Debug, Clone, Copy, Eq, PartialEq, Hash, Ord, PartialOrd)]
 pub struct Card(usize);
 
@@ -27,12 +26,11 @@ impl Hand {
             winner: winner,
             cards: cards,
         }
-
     }
 }
 
 impl FromIterator<(usize, Option<Card>)> for Hand {
-    fn from_iter<I: IntoIterator<Item=(usize, Option<Card>)>>(iter: I) -> Self {
+    fn from_iter<I: IntoIterator<Item = (usize, Option<Card>)>>(iter: I) -> Self {
         let mut cards = Vec::new();
 
         let mut max_card = Card(0);
@@ -57,7 +55,7 @@ impl FromIterator<(usize, Option<Card>)> for Hand {
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Player {
     name: String,
-    deck: VecDeque<Card>
+    deck: VecDeque<Card>,
 }
 
 impl Player {
@@ -71,7 +69,10 @@ impl Player {
             return Ok(Self::new(name.clone(), cards));
         }
 
-        Err(AocError::InvalidInput(format!("Could not make player from {:#?}", input)))
+        Err(AocError::InvalidInput(format!(
+            "Could not make player from {:#?}",
+            input
+        )))
     }
 
     pub fn new(name: String, cards: Vec<Card>) -> Self {
@@ -105,7 +106,11 @@ impl Player {
 
     pub fn score(&self) -> usize {
         let len = self.deck.len();
-        self.deck.iter().enumerate().map(|(index, card)| (len - index) * card.0).sum()
+        self.deck
+            .iter()
+            .enumerate()
+            .map(|(index, card)| (len - index) * card.0)
+            .sum()
     }
 }
 
@@ -125,7 +130,6 @@ impl Game {
         Ok(Game::new(players))
     }
 
-
     pub fn new(players: Vec<Player>) -> Self {
         Game {
             players: players,
@@ -135,10 +139,12 @@ impl Game {
 
     pub fn play(&mut self) -> Result<(Player, usize)> {
         loop {
-            let remaining = self.players
+            let remaining = self
+                .players
                 .iter()
                 .enumerate()
-                .filter(|(_, p)| !p.is_empty()).map(|(i, _)| i)
+                .filter(|(_, p)| !p.is_empty())
+                .map(|(i, _)| i)
                 .collect::<Vec<usize>>();
 
             if remaining.len() > 1 {
@@ -147,7 +153,7 @@ impl Game {
                 return match self.players.get(remaining[0]) {
                     Some(player) => Ok((player.clone(), remaining[0])),
                     None => Err(AocError::GameError("could not get winner".to_string())),
-                }
+                };
             }
         }
     }
@@ -155,7 +161,8 @@ impl Game {
     pub fn round(&mut self) {
         self.round += 1;
 
-        let cards = self.players
+        let cards = self
+            .players
             .iter_mut()
             .enumerate()
             .map(|(i, p)| (i, p.draw()))
@@ -164,7 +171,6 @@ impl Game {
         let mut h = Hand::from_iter(cards);
         h.cards.sort();
         h.cards.reverse();
-
 
         if let Some(player) = self.players.get_mut(h.winner) {
             player.take(h);
@@ -188,7 +194,6 @@ impl RecursiveGame {
         Ok(RecursiveGame::new(players))
     }
 
-
     pub fn new(players: Vec<Player>) -> Self {
         RecursiveGame {
             players: players,
@@ -204,15 +209,17 @@ impl RecursiveGame {
                 return match self.players.get(0) {
                     Some(player) => Ok((player.clone(), 0)),
                     None => Err(AocError::GameError("could not get winner".to_string())),
-                }
+                };
             } else {
                 self.rounds.insert(scores);
             }
 
-            let remaining = self.players
+            let remaining = self
+                .players
                 .iter()
                 .enumerate()
-                .filter(|(_, p)| !p.is_empty()).map(|(i, _)| i)
+                .filter(|(_, p)| !p.is_empty())
+                .map(|(i, _)| i)
                 .collect::<Vec<usize>>();
 
             if remaining.len() > 1 {
@@ -221,13 +228,14 @@ impl RecursiveGame {
                 return match self.players.get(remaining[0]) {
                     Some(player) => Ok((player.clone(), remaining[0])),
                     None => Err(AocError::GameError("could not get winner".to_string())),
-                }
+                };
             }
         }
     }
 
     pub fn round(&mut self) -> Result<()> {
-        let cards = self.players
+        let cards = self
+            .players
             .iter_mut()
             .enumerate()
             .map(|(i, p)| {
@@ -241,10 +249,18 @@ impl RecursiveGame {
             })
             .collect::<Vec<(usize, Option<Card>, Vec<Card>)>>();
 
-        let mut h = Hand { winner: 0, cards: Vec::new() };
+        let mut h = Hand {
+            winner: 0,
+            cards: Vec::new(),
+        };
 
         // check if should recurse
-        if cards.iter().filter(|(_, _, cards_to_take)| !cards_to_take.is_empty()).count() > 1 {
+        if cards
+            .iter()
+            .filter(|(_, _, cards_to_take)| !cards_to_take.is_empty())
+            .count()
+            > 1
+        {
             // recurse
             let players = cards
                 .iter()
@@ -269,16 +285,11 @@ impl RecursiveGame {
 
             h.winner = winner.1;
         } else {
-            h = Hand::from_iter(
-                cards
-                    .into_iter()
-                    .map(|(i, c, _)| (i, c))
-            );
+            h = Hand::from_iter(cards.into_iter().map(|(i, c, _)| (i, c)));
 
             h.cards.sort();
             h.cards.reverse();
         }
-
 
         if let Some(player) = self.players.get_mut(h.winner) {
             player.take(h);
@@ -298,7 +309,7 @@ impl RecursiveGame {
             return match self.players.get(*winner) {
                 Some(player) => Ok((player.clone(), *winner)),
                 None => Err(AocError::GameError("could not get winner".to_string())),
-            }
+            };
         } else {
             let winner = loop {
                 // check if ever a round like this one -> player 1 wins
@@ -312,10 +323,12 @@ impl RecursiveGame {
                     self.rounds.insert(scores);
                 }
 
-                let remaining = self.players
+                let remaining = self
+                    .players
                     .iter()
                     .enumerate()
-                    .filter(|(_, p)| !p.is_empty()).map(|(i, _)| i)
+                    .filter(|(_, p)| !p.is_empty())
+                    .map(|(i, _)| i)
                     .collect::<Vec<usize>>();
 
                 if remaining.len() > 1 {
@@ -337,7 +350,8 @@ impl RecursiveGame {
     }
 
     pub fn round_cached(&mut self, cache: &mut HashMap<Vec<usize>, usize>) -> Result<()> {
-        let cards = self.players
+        let cards = self
+            .players
             .iter_mut()
             .enumerate()
             .map(|(i, p)| {
@@ -351,10 +365,18 @@ impl RecursiveGame {
             })
             .collect::<Vec<(usize, Option<Card>, Vec<Card>)>>();
 
-        let mut h = Hand { winner: 0, cards: Vec::new() };
+        let mut h = Hand {
+            winner: 0,
+            cards: Vec::new(),
+        };
 
         // check if should recurse
-        if cards.iter().filter(|(_, _, cards_to_take)| !cards_to_take.is_empty()).count() > 1 {
+        if cards
+            .iter()
+            .filter(|(_, _, cards_to_take)| !cards_to_take.is_empty())
+            .count()
+            > 1
+        {
             // recurse
             let players = cards
                 .iter()
@@ -379,16 +401,11 @@ impl RecursiveGame {
 
             h.winner = winner.1;
         } else {
-            h = Hand::from_iter(
-                cards
-                    .into_iter()
-                    .map(|(i, c, _)| (i, c))
-            );
+            h = Hand::from_iter(cards.into_iter().map(|(i, c, _)| (i, c)));
 
             h.cards.sort();
             h.cards.reverse();
         }
-
 
         if let Some(player) = self.players.get_mut(h.winner) {
             player.take(h);
@@ -397,7 +414,6 @@ impl RecursiveGame {
         Ok(())
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -409,10 +425,7 @@ mod tests {
 
         #[test]
         fn drawing() {
-            let mut p = Player::new(
-                "Test Player".to_string(),
-                vec![Card(3), Card(2), Card(10)]
-            );
+            let mut p = Player::new("Test Player".to_string(), vec![Card(3), Card(2), Card(10)]);
 
             assert_eq!(p.draw(), Some(Card(3)));
             assert_eq!(p.draw(), Some(Card(2)));
@@ -422,10 +435,7 @@ mod tests {
 
         #[test]
         fn taking() {
-            let mut p = Player::new(
-                "Test Player".to_string(),
-                vec![Card(3), Card(2), Card(10)]
-            );
+            let mut p = Player::new("Test Player".to_string(), vec![Card(3), Card(2), Card(10)]);
 
             let h = Hand::new(999, vec![Card(4), Card(5)]);
 
@@ -433,11 +443,10 @@ mod tests {
 
             let expected = Player::new(
                 "Test Player".to_string(),
-                vec![Card(3), Card(2), Card(10), Card(4), Card(5)]
+                vec![Card(3), Card(2), Card(10), Card(4), Card(5)],
             );
 
             assert_eq!(p, expected);
-
         }
 
         #[test]
@@ -455,7 +464,7 @@ mod tests {
                     Card(4),
                     Card(7),
                     Card(1),
-                ]
+                ],
             );
 
             assert_eq!(p.score(), 306);
@@ -476,7 +485,7 @@ mod tests {
                     Card(4),
                     Card(7),
                     Card(1),
-                ]
+                ],
             );
 
             let peek = p.peek(3);
@@ -490,7 +499,8 @@ mod tests {
 
         #[test]
         fn play() {
-            let input = test_input("
+            let input = test_input(
+                "
                 Player 1:
                 9
                 2
@@ -504,7 +514,8 @@ mod tests {
                 4
                 7
                 10
-            ");
+            ",
+            );
 
             let mut g = Game::from_input(&input).unwrap();
             let winner = g.play().unwrap();
@@ -518,7 +529,8 @@ mod tests {
 
         #[test]
         fn play() {
-            let input = test_input("
+            let input = test_input(
+                "
                 Player 1:
                 9
                 2
@@ -532,7 +544,8 @@ mod tests {
                 4
                 7
                 10
-            ");
+            ",
+            );
 
             let mut g = RecursiveGame::from_input(&input).unwrap();
             let winner = g.play().unwrap();
@@ -542,7 +555,8 @@ mod tests {
 
         #[test]
         fn play_cached() {
-            let input = test_input("
+            let input = test_input(
+                "
                 Player 1:
                 9
                 2
@@ -556,7 +570,8 @@ mod tests {
                 4
                 7
                 10
-            ");
+            ",
+            );
 
             let mut g = RecursiveGame::from_input(&input).unwrap();
             let winner = g.play_cached().unwrap();

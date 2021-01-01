@@ -1,7 +1,6 @@
 use crate::error::{AocError, Result};
 use std::collections::{HashMap, HashSet};
 
-
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Allergen(pub String);
 
@@ -84,7 +83,9 @@ impl ShoppingList {
                 }
 
                 if food.ingredients.is_empty() {
-                    return Err(AocError::InvalidInput("Food had no ingredients".to_string()));
+                    return Err(AocError::InvalidInput(
+                        "Food had no ingredients".to_string(),
+                    ));
                 }
 
                 list.food.push(food);
@@ -97,11 +98,11 @@ impl ShoppingList {
     pub fn match_allergens(&self) -> HashMap<Ingredient, Option<Allergen>> {
         let mut candidate_map = self.make_candidate_map();
         let mut ingredient_map: HashMap<Ingredient, Option<Allergen>> = HashMap::new();
-        self.ingredients.iter().for_each(|i| {
-            match ingredient_map.insert(i.clone(), None) {
+        self.ingredients
+            .iter()
+            .for_each(|i| match ingredient_map.insert(i.clone(), None) {
                 _ => {}
-            }
-        });
+            });
 
         loop {
             if self.reduce(&mut candidate_map, &mut ingredient_map) {
@@ -115,21 +116,28 @@ impl ShoppingList {
     pub fn reduce(
         &self,
         candidate_map: &mut HashMap<Allergen, HashSet<Ingredient>>,
-        ingredient_map: &mut HashMap<Ingredient, Option<Allergen>>
+        ingredient_map: &mut HashMap<Ingredient, Option<Allergen>>,
     ) -> bool {
         let found = candidate_map
             .iter()
             .filter(|(_, ingredients)| ingredients.len() == 1)
             .map(|(allergen, ingredients)| {
-                (allergen.clone(), ingredients.iter().cloned().next().unwrap())
-            }).collect::<Vec<(Allergen, Ingredient)>>();
+                (
+                    allergen.clone(),
+                    ingredients.iter().cloned().next().unwrap(),
+                )
+            })
+            .collect::<Vec<(Allergen, Ingredient)>>();
 
         if found.is_empty() {
             return true;
         }
 
         for (allergen, ingredient) in found.iter() {
-            for (_, ingredients) in candidate_map.iter_mut().filter(|(_, ingredients)| ingredients.len() > 1) {
+            for (_, ingredients) in candidate_map
+                .iter_mut()
+                .filter(|(_, ingredients)| ingredients.len() > 1)
+            {
                 ingredients.remove(&ingredient);
             }
 
@@ -144,11 +152,14 @@ impl ShoppingList {
         let mut candidate_map: HashMap<Allergen, HashSet<Ingredient>> = HashMap::new();
 
         for allergen in self.allergens.iter() {
-            let ingredients = self.food
+            let ingredients = self
+                .food
                 .iter()
                 .filter(|f| f.contains_allergen(allergen))
                 .fold(self.ingredients.clone(), |acc, f| {
-                    acc.intersection(f.ingredients()).cloned().collect::<HashSet<Ingredient>>()
+                    acc.intersection(f.ingredients())
+                        .cloned()
+                        .collect::<HashSet<Ingredient>>()
                 });
 
             if !ingredients.is_empty() {
@@ -160,7 +171,10 @@ impl ShoppingList {
     }
 
     pub fn count_appearance(&self, ingredient: &Ingredient) -> usize {
-        self.food.iter().filter(|f| f.contains_ingredient(ingredient)).count()
+        self.food
+            .iter()
+            .filter(|f| f.contains_ingredient(ingredient))
+            .count()
     }
 }
 
@@ -173,12 +187,14 @@ mod tests {
         use super::*;
 
         fn example_list() -> ShoppingList {
-            let input = test_input("
+            let input = test_input(
+                "
                 mxmxvkd kfcds sqjhc nhms (contains dairy, fish)
                 trh fvjkl sbzzf mxmxvkd (contains dairy)
                 sqjhc fvjkl (contains soy)
                 sqjhc mxmxvkd sbzzf (contains fish)
-            ");
+            ",
+            );
 
             ShoppingList::from_input(&input).unwrap()
         }

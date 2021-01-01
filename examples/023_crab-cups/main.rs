@@ -1,7 +1,6 @@
 use aoc::cups::Game;
 use std::str::FromStr;
 
-
 fn main() {
     let mut game = Game::from_str("459672813").expect("could not make game");
 

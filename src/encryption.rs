@@ -3,7 +3,6 @@ const DIVISOR: usize = 20201227;
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub struct Key(pub usize);
 
-
 impl Key {
     pub fn new(loop_size: usize, subject_number: usize) -> Self {
         let mut value = 1;
@@ -54,7 +53,6 @@ impl Device {
         Key::new(self.loop_size, other.0)
     }
 }
-
 
 #[cfg(test)]
 mod tests {
