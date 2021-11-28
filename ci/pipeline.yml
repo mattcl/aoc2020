@@ -1,0 +1,13 @@
+resources:
+  - name: repo
+    type: git
+    icon: github
+    source:
+      uri: https://github.com/mattcl/aoc2020.git
+
+jobs:
+  - name: build
+    plan:
+      - get: repo
+      - task: test
+        file: repo/ci/tasks/test.yml
