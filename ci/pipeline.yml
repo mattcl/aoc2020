@@ -9,5 +9,6 @@ jobs:
   - name: build
     plan:
       - get: repo
+        trigger: true
       - task: test
         file: repo/ci/tasks/test.yml
