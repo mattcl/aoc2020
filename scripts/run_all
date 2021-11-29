@@ -1,6 +1,6 @@
 #!/bin/sh
 
-example=$(find examples -type d -maxdepth 1 -regextype sed -regex ".*/[0-9]\+_.*" -exec basename {} \;)
+example=$(find examples -maxdepth 1 -type d -regextype sed -regex ".*/[0-9]\+_.*" -exec basename {} \;)
 for e in $example
 do
   cargo run --example $e --release
