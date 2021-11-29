@@ -10,5 +10,5 @@ jobs:
     plan:
       - get: repo
         trigger: true
-      - task: test
-        file: repo/ci/tasks/test.yml
+      - task: check-and-compile
+        file: repo/ci/tasks/check-and-compile.yml

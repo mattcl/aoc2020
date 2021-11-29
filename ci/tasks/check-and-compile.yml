@@ -18,5 +18,10 @@ caches:
 
 run:
   dir: repo
-  path: cargo
-  args: ["test"]
+  path: /bin/sh
+  args:
+    - "-c"
+    - |
+      cargo check --all-targets
+      cargo test
+      cargo build --release --examples
