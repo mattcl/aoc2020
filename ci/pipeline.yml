@@ -12,3 +12,5 @@ jobs:
         trigger: true
       - task: check-and-compile
         file: repo/ci/tasks/check-and-compile.yml
+      - task: run-solutions
+        file: repo/ci/tasks/run-solutions.yml
